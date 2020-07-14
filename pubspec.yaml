@@ -1,14 +1,14 @@
 name: nano
 description: An easy to use modular state management library
 version: 0.0.1
-author:
-homepage:
+homepage: https://github.com/purplecandy/nano
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  rxdart: ">= 0.24.1"
+  rxdart: "^0.24.1"
+  meta: "^1.1.8"
   flutter:
     sdk: flutter
 
