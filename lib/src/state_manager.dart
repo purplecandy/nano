@@ -77,12 +77,14 @@ abstract class StateManager<S, T, A> {
   S get cStatus => _controller.value.status;
 
   /// Current state
-  StateSnapshot<S, T> get state => StateSnapshot(
-      _controller.value.status, _controller.value.data, _lastEmittedError);
+  StateSnapshot<S, T> get state => _lastEmittedError == null
+      ? StateSnapshot(_controller.value.status, _controller.value.data, null)
+      : StateSnapshot(null, null, _lastEmittedError);
 
   /// Emit a new state without error
   @protected
   void updateState(S state, T data) {
+    assert(data != null);
     _lastEmittedError = null;
     _controller.add(StateSnapshot<S, T>(state, data, _lastEmittedError));
   }
@@ -91,8 +93,9 @@ abstract class StateManager<S, T, A> {
   @protected
   void updateStateWithError(Object error) {
     assert(error != null);
-    _errorController.addError(error);
     _lastEmittedError = error;
+    _errorController
+        .addError(StateSnapshot<S, T>(null, null, _lastEmittedError));
   }
 
   StateSnapshot<S, T> _initialState(S state, T object) =>
