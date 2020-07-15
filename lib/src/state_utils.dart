@@ -38,7 +38,6 @@ class _ActionQueue<A> {
       _busy = true;
       await cb?.call(_queue.first);
       _dequeue();
-      print("Remaining ${_queue.length}");
       onChange(cb);
     }
     _busy = false;

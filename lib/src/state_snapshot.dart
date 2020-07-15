@@ -1,10 +1,8 @@
-class StateSnapshot<S, T> {
-  final S status;
+class StateSnapshot<T> {
   final T data;
   final Object error;
 
   const StateSnapshot(
-    this.status,
     this.data,
     this.error,
   ) : assert(!(data != null && error != null),

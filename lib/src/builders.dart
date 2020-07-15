@@ -2,15 +2,14 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'state_snapshot.dart';
 
-typedef bool BuilderCondition<S, T>(StateSnapshot state);
-typedef Widget SnapBuilder<S, T>(
-    BuildContext context, StateSnapshot<S, T> event);
+typedef bool BuilderCondition<T>(StateSnapshot<T> state);
+typedef Widget SnapBuilder<T>(BuildContext context, StateSnapshot<T> event);
 
-class StateBuilder<S, T> extends StatefulWidget {
-  final StateSnapshot<S, T> initialState;
-  final Stream<StateSnapshot<S, T>> stream;
-  final BuilderCondition<S, T> rebuildOnly;
-  final SnapBuilder<S, T> builder;
+class StateBuilder<T> extends StatefulWidget {
+  final StateSnapshot<T> initialState;
+  final Stream<StateSnapshot<T>> stream;
+  final BuilderCondition<T> rebuildOnly;
+  final SnapBuilder<T> builder;
   final Widget Function(BuildContext context, T data) onData;
   final Widget Function(BuildContext context, Object error) onError;
   const StateBuilder(
@@ -27,13 +26,13 @@ class StateBuilder<S, T> extends StatefulWidget {
         super(key: key);
   // true &&
   @override
-  _StateBuilderState createState() => _StateBuilderState<S, T>();
+  _StateBuilderState createState() => _StateBuilderState<T>();
 }
 
-class _StateBuilderState<S, T> extends State<StateBuilder<S, T>> {
-  Stream<StateSnapshot<S, T>> get stream => widget.stream;
+class _StateBuilderState<T> extends State<StateBuilder<T>> {
+  Stream<StateSnapshot<T>> get stream => widget.stream;
   StreamSubscription _subscription;
-  StateSnapshot<S, T> _lastValue;
+  StateSnapshot<T> _lastValue;
   bool _hasError = false;
 
   void _initialize() {
@@ -76,7 +75,7 @@ class _StateBuilderState<S, T> extends State<StateBuilder<S, T>> {
   }
 
   @override
-  void didUpdateWidget(StateBuilder<S, T> oldWidget) {
+  void didUpdateWidget(StateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.stream != widget?.stream ?? false) _initialize();
   }

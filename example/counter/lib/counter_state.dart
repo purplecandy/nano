@@ -8,17 +8,17 @@ enum CounterActions {
   error,
 }
 
-class CounterState extends StateManager<dynamic, int, dynamic> {
-  CounterState() : super(state: dynamic, object: 0);
+class CounterState extends StateManager<int, CounterActions> {
+  CounterState() : super(0);
 
   @override
   Future<void> reducer(action, props) async {
     switch (action) {
       case CounterActions.increment:
-        updateState(null, cData + 1);
+        updateState(cData + 1);
         break;
       case CounterActions.decrement:
-        updateState(null, cData - 1);
+        updateState(cData - 1);
         break;
       case CounterActions.error:
         updateStateWithError("Invalid action");

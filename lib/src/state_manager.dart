@@ -24,46 +24,38 @@ typedef Dispatcher<A> = void Function(
 
 typedef ActionWorker<A> = Function(Dispatcher<A> put);
 
-abstract class StateManager<S, T, A> {
+abstract class StateManager<T, A> {
   final _defaultMiddlewares = List<MiddleWare>();
   final _watchers = <A, List<ActionWorker<A>>>{};
   final _queue = _ActionQueue();
 
   /// Controller that manges the actual data events
-  BehaviorSubject<StateSnapshot<S, T>> _controller;
+  BehaviorSubject<StateSnapshot<T>> _controller;
 
   /// Controller that only manges the error events
-  PublishSubject<StateSnapshot<S, T>> _errorController;
+  PublishSubject<StateSnapshot<T>> _errorController;
 
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
 
-  StateManager({S state, T object}) {
-    //emit the error object with a null first
-    _errorController = PublishSubject<StateSnapshot<S, T>>();
-    _controller = BehaviorSubject<StateSnapshot<S, T>>();
-    _controller = BehaviorSubject<StateSnapshot<S, T>>.seeded(
-        _initialState(state, object));
+  StateManager(T state) : assert(state != null) {
+    _errorController = PublishSubject<StateSnapshot<T>>();
+    _controller = BehaviorSubject<StateSnapshot<T>>();
+    _controller =
+        BehaviorSubject<StateSnapshot<T>>.seeded(_initialState(state));
   }
 
   ///Controller of the event stream
-  BehaviorSubject<StateSnapshot<S, T>> get controller => _controller;
+  BehaviorSubject<StateSnapshot<T>> get controller => _controller;
 
   ///Stream that recieves both events and errors as data
-  ///
-  ///Note: Errors are also treated as data
-  Stream<StateSnapshot<S, T>> get _mergedStream =>
+  Stream<StateSnapshot<T>> get _mergedStream =>
       _controller.stream.mergeWith([_errorController.stream]);
 
-  Stream<StateSnapshot<S, T>> get stream =>
+  Stream<StateSnapshot<T>> get stream =>
       _mergedStream.transform(StreamTransformer.fromHandlers(
-        handleData: (value, sink) {
-          //Can't compare with the value state because the errorController is a publishsubject and it will not replay a value
-          if (state.hasError)
-            sink.addError(state);
-          else
-            sink.add(state);
-        },
+        handleData: (data, sink) => sink.add(state),
+        handleError: (error, stackTrace, sink) => sink.addError(state),
       ));
 
   /// It returns a stream of `T` insted of [StateSnapshot]
@@ -79,22 +71,17 @@ abstract class StateManager<S, T, A> {
   /// It will not be overridden by an error
   T get cData => _controller.value.data;
 
-  /// Returns the `StateSnapshot.status` from last emitted state without errors
-  ///
-  /// It will not be overridden by an error
-  S get cStatus => _controller.value.status;
-
   /// Current state
-  StateSnapshot<S, T> get state => _lastEmittedError == null
-      ? StateSnapshot(_controller.value.status, _controller.value.data, null)
-      : StateSnapshot(null, null, _lastEmittedError);
+  StateSnapshot<T> get state => _lastEmittedError == null
+      ? StateSnapshot(_controller.value.data, null)
+      : StateSnapshot(null, _lastEmittedError);
 
   /// Emit a new state without error
   @protected
-  void updateState(S state, T data) {
+  void updateState(T data) {
     assert(data != null);
     _lastEmittedError = null;
-    _controller.add(StateSnapshot<S, T>(state, data, _lastEmittedError));
+    _controller.add(StateSnapshot<T>(data, _lastEmittedError));
   }
 
   /// Emit a state with error
@@ -102,11 +89,10 @@ abstract class StateManager<S, T, A> {
   void updateStateWithError(Object error) {
     assert(error != null);
     _lastEmittedError = error;
-    _errorController.add(StateSnapshot<S, T>(null, null, _lastEmittedError));
+    _errorController.addError(StateSnapshot<T>(null, _lastEmittedError));
   }
 
-  StateSnapshot<S, T> _initialState(S state, T object) =>
-      StateSnapshot<S, T>(state, object, null);
+  StateSnapshot<T> _initialState(T object) => StateSnapshot<T>(object, null);
 
   void dispose() {
     _controller.close();
