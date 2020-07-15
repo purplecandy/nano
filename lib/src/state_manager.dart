@@ -40,10 +40,16 @@ abstract class StateManager<T, A> {
 
   StateManager(T state) : assert(state != null) {
     _errorController = PublishSubject<StateSnapshot<T>>();
-    _controller = BehaviorSubject<StateSnapshot<T>>();
     _controller =
         BehaviorSubject<StateSnapshot<T>>.seeded(_initialState(state));
   }
+
+  StateSnapshot<T> _initialState(T object) => StateSnapshot<T>(object, null);
+
+  /// Current state
+  StateSnapshot<T> get state => _lastEmittedError == null
+      ? StateSnapshot(_controller.value.data, null)
+      : StateSnapshot(null, _lastEmittedError);
 
   ///Controller of the event stream
   BehaviorSubject<StateSnapshot<T>> get controller => _controller;
@@ -71,11 +77,6 @@ abstract class StateManager<T, A> {
   /// It will not be overridden by an error
   T get cData => _controller.value.data;
 
-  /// Current state
-  StateSnapshot<T> get state => _lastEmittedError == null
-      ? StateSnapshot(_controller.value.data, null)
-      : StateSnapshot(null, _lastEmittedError);
-
   /// Emit a new state without error
   @protected
   void updateState(T data) {
@@ -91,8 +92,6 @@ abstract class StateManager<T, A> {
     _lastEmittedError = error;
     _errorController.addError(StateSnapshot<T>(null, _lastEmittedError));
   }
-
-  StateSnapshot<T> _initialState(T object) => StateSnapshot<T>(object, null);
 
   void dispose() {
     _controller.close();

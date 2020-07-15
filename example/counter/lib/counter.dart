@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:nano/nano.dart';
 import 'counter_state.dart';
-import 'middlewares.dart';
 
 class CounterApp extends StatefulWidget {
   CounterApp({Key key}) : super(key: key);
@@ -50,7 +49,6 @@ class _CounterAppState extends State<CounterApp> {
                 })
           ],
         ),
-
         body: StateBuilder<int>(
           initialState: _counter.state,
           stream: _counter.stream,
@@ -59,15 +57,6 @@ class _CounterAppState extends State<CounterApp> {
           // onError: (_,   error) => Center(child: Text(error.toString())),
           // onData: (_, data) => Center(child: Text(data.toString())),
         ),
-        // body: CounterText(),
-        // body: StreamBuilder(
-        //   stream: _counter.rawStream,
-        //   initialData: _counter.state,
-        //   builder: (context, snap) => Text(
-        //     snap.hasError ? snap.error.toString() : snap.data.toString(),
-        //     style: TextStyle(fontSize: 36, fontWeight: FontWeight.w700),
-        //   ),
-        // ),
         floatingActionButton: Column(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
@@ -76,7 +65,6 @@ class _CounterAppState extends State<CounterApp> {
               heroTag: null,
               onPressed: () => _counter.dispatch(
                 CounterActions.increment,
-                onDone: () => print("action completed"),
                 onSuccess: () => print(_counter.cData),
                 onError: (e, stack) => print(stack),
               ),
