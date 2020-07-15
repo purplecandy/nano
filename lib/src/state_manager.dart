@@ -49,22 +49,30 @@ abstract class StateManager<S, T, A> {
   ///Controller of the event stream
   BehaviorSubject<StateSnapshot<S, T>> get controller => _controller;
 
-  ///Stream that recieves both events and errors
+  ///Stream that recieves both events and errors as data
   ///
-  ///You should always listen to this stream
-  Stream<StateSnapshot<S, T>> get stream =>
+  ///Note: Errors are also treated as data
+  Stream<StateSnapshot<S, T>> get _mergedStream =>
       _controller.stream.mergeWith([_errorController.stream]);
+
+  Stream<StateSnapshot<S, T>> get stream =>
+      _mergedStream.transform(StreamTransformer.fromHandlers(
+        handleData: (value, sink) {
+          //Can't compare with the value state because the errorController is a publishsubject and it will not replay a value
+          if (state.hasError)
+            sink.addError(state);
+          else
+            sink.add(state);
+        },
+      ));
 
   /// It returns a stream of `T` insted of [StateSnapshot]
   ///
   /// Makes tests easier to write
-  Stream<T> get rawStream => stream
-          .transform(StreamTransformer.fromHandlers(handleData: (state, sink) {
-        if (state.hasData)
-          sink.add(state.data);
-        else
-          sink.add(state.error);
-      }));
+  Stream<T> get rawStream => stream.transform(StreamTransformer.fromHandlers(
+      handleData: (snapshot, sink) => sink.add(snapshot.data),
+      handleError: (error, stackTrace, sink) =>
+          sink.addError((error as StateSnapshot).error)));
 
   /// Returns the [StateSnapshot.data] from last emitted state.
   ///
@@ -94,8 +102,7 @@ abstract class StateManager<S, T, A> {
   void updateStateWithError(Object error) {
     assert(error != null);
     _lastEmittedError = error;
-    _errorController
-        .addError(StateSnapshot<S, T>(null, null, _lastEmittedError));
+    _errorController.add(StateSnapshot<S, T>(null, null, _lastEmittedError));
   }
 
   StateSnapshot<S, T> _initialState(S state, T object) =>
