@@ -1,13 +1,13 @@
 import 'package:nano/nano.dart';
 
-class LoggerMiddleWare extends MiddleWare {
+class LoggerMiddleWare extends Middleware {
   @override
-  Future<Reply> run(state, action, props) async {
+  Future<Prop> run(state, action, props) async {
     print("LOGGER REPORT:");
     print("Action-> $action");
     print("State-> $state");
     print("Props-> $props");
     print("==END==");
-    return Reply.success(props, allowNull: true);
+    return Prop.success(props, allowNull: true);
   }
 }

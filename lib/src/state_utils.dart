@@ -1,17 +1,22 @@
 part of 'state_manager.dart';
 
+class ActionTerminatedException implements Exception {
+  ActionTerminatedException([var message]);
+}
+
 class _QueuedAction<A> {
   final A actionType;
-  final dynamic initialProps;
-  final void Function() onDone, onSuccess;
+  final Prop initialProps;
+  final void Function() onDone, onSuccess, onStop;
   final void Function(Object error, StackTrace stack) onError;
-  final List<MiddleWare> pre;
+  final List<Middleware> pre;
   _QueuedAction(
       {@required this.actionType,
       @required this.initialProps,
       @required this.onDone,
       @required this.onSuccess,
       @required this.onError,
+      @required this.onStop,
       @required this.pre});
 }
 
@@ -47,10 +52,10 @@ class _ActionQueue<A> {
 class _MutliThreadArgs<T> {
   final T state;
   final dynamic action, props;
-  final MiddleWare middleWare;
+  final Middleware middleWare;
   const _MutliThreadArgs(this.middleWare, this.state, this.action, this.props);
 }
 
-Future<Reply> threadedExecution(_MutliThreadArgs args) async {
+Future<Prop> threadedExecution(_MutliThreadArgs args) async {
   return await args.middleWare.run(args.state, args.action, args.props);
 }

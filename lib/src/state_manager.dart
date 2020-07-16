@@ -15,17 +15,18 @@ part 'state_utils.dart';
 
 typedef Dispatcher<A> = void Function(
   A action, {
-  dynamic initialProps,
+  Prop initialProps,
   void Function() onDone,
   void Function() onSuccess,
+  void Function() onStop,
   void Function(Object error, StackTrace stack) onError,
-  List<MiddleWare> pre,
+  List<Middleware> pre,
 });
 
 typedef ActionWorker<A> = Function(Dispatcher<A> put);
 
 abstract class StateManager<T, A> {
-  final _defaultMiddlewares = List<MiddleWare>();
+  final _defaultMiddlewares = List<Middleware>();
   final _watchers = <A, List<ActionWorker<A>>>{};
   final _queue = _ActionQueue();
 
@@ -37,7 +38,6 @@ abstract class StateManager<T, A> {
 
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
-
   StateManager(T state) : assert(state != null) {
     _errorController = PublishSubject<StateSnapshot<T>>();
     _controller =
@@ -101,13 +101,13 @@ abstract class StateManager<T, A> {
     _defaultMiddlewares.clear();
   }
 
-  Future<void> reducer(A action, Reply props);
+  Future<void> reducer(A action, Prop props);
 
   Future<void> _internalDispatch(_QueuedAction qa) async {
     try {
       /// Props are values that are passed between middlewares and actions
       var props = qa.initialProps;
-      final combined = List<MiddleWare>()
+      final combined = List<Middleware>()
         ..addAll(_defaultMiddlewares)
         ..addAll(qa.pre ?? []);
       for (var middleware in combined) {
@@ -118,9 +118,9 @@ abstract class StateManager<T, A> {
         /// Reply of status unkown will cause an exception,
         /// unkown can will repsent situations that are considerend as traps
         /// this is abost the state update and [onError] will be called
-        if (resp.isUnknown) {
-          print("Middleware failed at: ${middleware.runtimeType}");
-          throw Exception(resp.error);
+        if (resp.isTerminated) {
+          throw ActionTerminatedException(
+              "Action termination requested by middleware: ${middleware.runtimeType}");
         } else {
           props = resp;
         }
@@ -128,6 +128,9 @@ abstract class StateManager<T, A> {
       await reducer(qa.actionType, props);
       qa.onSuccess?.call();
       _notifyWorkers(qa.actionType);
+    } on ActionTerminatedException catch (e) {
+      print(e);
+      qa.onStop?.call();
     } catch (e, stack) {
       print("An exception occured when executing the action: ${qa.actionType}");
       qa.onError?.call(e, stack);
@@ -139,7 +142,7 @@ abstract class StateManager<T, A> {
   /// Dispatch Actions which will mutate the state
   void dispatch(
     A action, {
-    dynamic initialProps,
+    Prop initialProps,
 
     /// When the action is completed
     void Function() onDone,
@@ -147,28 +150,33 @@ abstract class StateManager<T, A> {
     /// When the action is successfully completed
     void Function() onSuccess,
 
+    /// When a middleware requests to terminate the action
+    void Function() onStop,
+
     /// When the action fails to complete
     ///
     /// You can also force execute onError from a middleware by returning a `Status.unknown`
     void Function(Object error, StackTrace stack) onError,
 
     /// Middleware that will be called before the action is processed
-    List<MiddleWare> pre,
+    List<Middleware> pre,
   }) async {
     _queue.enqueue(
       _QueuedAction<A>(
-          actionType: action,
-          initialProps: initialProps,
-          onDone: onDone,
-          onSuccess: onSuccess,
-          onError: onError,
-          pre: pre),
+        actionType: action,
+        initialProps: initialProps,
+        onDone: onDone,
+        onSuccess: onSuccess,
+        onError: onError,
+        pre: pre,
+        onStop: onStop,
+      ),
       _internalDispatch,
     );
   }
 
   ///Sets a default middlewares that will be executed on every action
-  void setDefaultMiddlewares(List<MiddleWare> middlewares) {
+  void setDefaultMiddlewares(List<Middleware> middlewares) {
     if (_defaultMiddlewares.isNotEmpty)
       throw Exception("Default middlewares can only be set once");
     else

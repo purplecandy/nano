@@ -1,6 +1,7 @@
+import 'package:nano/nano.dart';
 import 'utils.dart';
 import 'state_snapshot.dart';
 
-abstract class MiddleWare {
-  Future<Reply> run(StateSnapshot state, action, props);
+abstract class Middleware {
+  Future<Prop> run(StateSnapshot state, action, Prop props);
 }
