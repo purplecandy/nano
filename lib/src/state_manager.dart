@@ -38,7 +38,9 @@ abstract class StateManager<T, A> {
 
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
-  StateManager(T state) : assert(state != null) {
+  StateManager(T state)
+  // : assert(state != null)
+  {
     _errorController = PublishSubject<StateSnapshot<T>>();
     _controller =
         BehaviorSubject<StateSnapshot<T>>.seeded(_initialState(state));
