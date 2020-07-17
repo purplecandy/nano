@@ -1,14 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'auth_models.dart';
 import 'package:nano/nano.dart';
 
 enum AuthActions {
   signIn,
   signOut,
-}
-
-class Credentials {
-  final String email, password;
-  const Credentials(this.email, this.password);
 }
 
 class AuthState extends StateManager<FirebaseUser, AuthActions>
