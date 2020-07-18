@@ -6,52 +6,52 @@ import 'contacts_state.dart';
 import 'contacts_models.dart';
 
 class ContactsWidget extends StatefulWidget {
-  ContactsWidget({Key key}) : super(key: key);
+  final ContactState contactState;
+  ContactsWidget({Key key, this.contactState}) : super(key: key);
 
   @override
   _ContactsWidgetState createState() => _ContactsWidgetState();
 }
 
 class _ContactsWidgetState extends State<ContactsWidget> {
+  ContactState get contactState => widget.contactState;
   @override
   Widget build(BuildContext context) {
-    return Consumer<ContactState>(
-      builder: (context, _contactState, _) => StateBuilder<ContactList>(
-        initialState: _contactState.state,
-        stream: _contactState.stream,
-        onError: (context, error) => Center(
-          child: Text(error.toString()),
-        ),
-        onData: (context, data) {
-          switch (data.status) {
-            case Status.loading:
-              return Center(child: CircularProgressIndicator());
-              break;
-            case Status.error:
-              return Center(child: Text("You don't have any contacts yet."));
-              break;
-            case Status.success:
-              return ListView.builder(
-                itemCount: data.contacts.length,
-                itemBuilder: (context, index) => Card(
-                  child: ListTile(
-                    title: Text(data.contacts[index].name),
-                    trailing: IconButton(
-                        icon: Icon(Icons.delete),
-                        onPressed: () {
-                          _contactState.dispatch(ContactAction.delete,
-                              initialProps:
-                                  Prop.success(data.contacts[index].name));
-                        }),
-                  ),
-                ),
-              );
-              break;
-            default:
-              return Container();
-          }
-        },
+    return StateBuilder<ContactList>(
+      initialState: contactState.state,
+      stream: contactState.stream,
+      onError: (context, error) => Center(
+        child: Text(error.toString()),
       ),
+      onData: (context, data) {
+        switch (data.status) {
+          case Status.loading:
+            return Center(child: CircularProgressIndicator());
+            break;
+          case Status.error:
+            return Center(child: Text("You don't have any contacts yet."));
+            break;
+          case Status.success:
+            return ListView.builder(
+              itemCount: data.contacts.length,
+              itemBuilder: (context, index) => Card(
+                child: ListTile(
+                  title: Text(data.contacts[index].name),
+                  trailing: IconButton(
+                      icon: Icon(Icons.delete),
+                      onPressed: () {
+                        contactState.dispatch(ContactAction.delete,
+                            initialProps:
+                                Prop.success(data.contacts[index].name));
+                      }),
+                ),
+              ),
+            );
+            break;
+          default:
+            return Container();
+        }
+      },
     );
   }
 }

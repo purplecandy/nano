@@ -8,24 +8,24 @@ import 'contacts_state.dart';
 import 'contacts_widgets.dart';
 
 class ContactsView extends StatefulWidget {
-  ContactsView({Key key}) : super(key: key);
+  final ContactState contactState;
+  final AuthState authState;
+  ContactsView({Key key, this.contactState, this.authState}) : super(key: key);
 
   @override
   _ContactsViewState createState() => _ContactsViewState();
 }
 
 class _ContactsViewState extends State<ContactsView> {
-  ContactState _contactState;
-  AuthState _authState;
+  ContactState get contactState => widget.contactState;
+  AuthState get authState => widget.authState;
   @override
   void initState() {
     super.initState();
-    _contactState = Provider.of<ContactState>(context, listen: false);
-    _authState = Provider.of<AuthState>(context, listen: false);
   }
 
   void onCreate(String name) {
-    _contactState.dispatch(ContactAction.add, initialProps: Prop.success(name));
+    contactState.dispatch(ContactAction.add, initialProps: Prop.success(name));
   }
 
   @override
@@ -34,17 +34,14 @@ class _ContactsViewState extends State<ContactsView> {
       appBar: AppBar(
         title: Text("Contacts"),
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.subdirectory_arrow_right),
-              onPressed: () => _authState.dispatch(AuthActions.signIn,
-                  initialProps: Prop.success(
-                      Credentials("example@example.com", "example")))),
-          IconButton(
-              icon: Icon(Icons.subdirectory_arrow_left),
-              onPressed: () => _authState.dispatch(AuthActions.signOut))
+          FlatButton(
+              onPressed: () => authState.dispatch(AuthActions.signOut),
+              child: Text("Logout"))
         ],
       ),
-      body: ContactsWidget(),
+      body: ContactsWidget(
+        contactState: contactState,
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(

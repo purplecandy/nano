@@ -21,6 +21,27 @@ class _HomePageState extends State<HomePage> {
       builder: (context, authState, _) => StateBuilder<FirebaseUser>(
         initialState: authState.state,
         stream: authState.stream,
+        // builder: (context, state) {
+        //   print("STATE - " + state.toString());
+        //   if (state.hasError)
+        //     return PleaseSignIn();
+        //   else
+        //     return Provider<ContactState>(
+        //       create: (_) {
+        //         final contactState = ContactState();
+        //         contactState.init(
+        //             Firestore.instance.collection("contacts").snapshots());
+        //         return contactState;
+        //       },
+        //       dispose: (_, counterState) => counterState.dispose(),
+        //       child: Consumer<ContactState>(
+        //         builder: (_, contactState, __) => ContactsView(
+        //           authState: authState,
+        //           contactState: contactState,
+        //         ),
+        //       ),
+        //     );
+        // },
         onError: (context, error) => PleaseSignIn(),
         onData: (context, data) {
           print(data);
@@ -32,7 +53,11 @@ class _HomePageState extends State<HomePage> {
                 return contactState;
               },
               dispose: (_, counterState) => counterState.dispose(),
-              child: ContactsView());
+              child: Consumer<ContactState>(
+                  builder: (_, contactState, __) => ContactsView(
+                        authState: authState,
+                        contactState: contactState,
+                      )));
         },
       ),
     );
@@ -44,9 +69,22 @@ class PleaseSignIn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text("Please Sign In"),
+    return Consumer<AuthState>(
+      builder: (context, authState, _) => Scaffold(
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Center(child: Text("Please Sign In")),
+            FlatButton(
+              onPressed: () => authState.dispatch(AuthActions.signIn,
+                  initialProps: Prop.success(
+                      Credentials("example@example.com", "example"))),
+              child: Text("Login"),
+              color: Colors.blue,
+            )
+          ],
+        ),
       ),
     );
   }
