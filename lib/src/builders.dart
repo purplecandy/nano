@@ -1,17 +1,21 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'state_snapshot.dart';
 
 typedef bool BuilderCondition<T>(StateSnapshot<T> state);
 typedef Widget SnapBuilder<T>(BuildContext context, StateSnapshot<T> event);
+typedef Widget DataBuilderFn<T>(BuildContext context, T data);
+typedef Widget ErrorBuilderFn(BuildContext context, Object error);
 
 class StateBuilder<T> extends StatefulWidget {
   final StateSnapshot<T> initialState;
   final Stream<StateSnapshot<T>> stream;
   final BuilderCondition<T> rebuildOnly;
   final SnapBuilder<T> builder;
-  final Widget Function(BuildContext context, T data) onData;
-  final Widget Function(BuildContext context, Object error) onError;
+  final DataBuilderFn<T> onData;
+  final ErrorBuilderFn onError;
   const StateBuilder(
       {Key key,
       @required this.initialState,

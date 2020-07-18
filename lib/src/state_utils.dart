@@ -25,7 +25,7 @@ class _ActionQueue<A> {
   bool _busy = false;
 
   /// Removes all actions from the queue
-  get clear => _queue.clear();
+  void clear() => _queue.clear();
   bool get isEmpty => _queue.isEmpty;
   bool get isNotEmpty => _queue.isNotEmpty;
 
