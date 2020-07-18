@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_example/utils.dart';
 import 'package:firebase_example/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,7 +40,9 @@ class _AppState extends State<App> {
           visualDensity: VisualDensity.adaptivePlatformDensity,
         ),
         routes: {
-          "/": (context) => HomePage(),
+          "/": (context) => HomePage(
+                authState: grab<AuthState>(context),
+              ),
         },
       ),
     );
