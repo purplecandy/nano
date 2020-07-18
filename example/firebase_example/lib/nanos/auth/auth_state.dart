@@ -9,7 +9,9 @@ enum AuthActions {
 
 class AuthState extends StateManager<FirebaseUser, AuthActions>
     with ProxyStream<FirebaseUser> {
-  AuthState() : super(null);
+  @override
+  bool get setInitialState => false;
+
   @override
   void mapper({FirebaseUser event, bool isError = false, Object error}) {
     if (event != null)

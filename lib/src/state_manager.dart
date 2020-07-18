@@ -38,19 +38,22 @@ abstract class StateManager<T, A> {
 
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
-  StateManager(T state)
-  // : assert(state != null)
-  {
+  StateManager([T state]) {
     _errorController = PublishSubject<StateSnapshot<T>>();
-    _controller =
-        BehaviorSubject<StateSnapshot<T>>.seeded(_initialState(state));
+    if (setInitialState)
+      _controller =
+          BehaviorSubject<StateSnapshot<T>>.seeded(_initialState(state));
+    else
+      _controller = BehaviorSubject<StateSnapshot<T>>();
   }
+
+  bool get setInitialState => true;
 
   StateSnapshot<T> _initialState(T object) => StateSnapshot<T>(object, null);
 
   /// Current state
   StateSnapshot<T> get state => _lastEmittedError == null
-      ? StateSnapshot(_controller.value.data, null)
+      ? StateSnapshot(_controller.value?.data, null)
       : StateSnapshot(null, _lastEmittedError);
 
   ///Controller of the event stream

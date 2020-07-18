@@ -9,7 +9,7 @@ class StateSnapshot<T> {
             "Both data and error cant be set at the same time");
   bool get hasData => data != null;
   bool get hasError => error != null;
-
+  bool get waiting => data == null && error == null;
   @override
   String toString() {
     return hasError ? error.toString() : data.toString();

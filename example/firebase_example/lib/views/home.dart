@@ -21,31 +21,11 @@ class _HomePageState extends State<HomePage> {
       builder: (context, authState, _) => StateBuilder<FirebaseUser>(
         initialState: authState.state,
         stream: authState.stream,
-        // builder: (context, state) {
-        //   print("STATE - " + state.toString());
-        //   if (state.hasError)
-        //     return PleaseSignIn();
-        //   else
-        //     return Provider<ContactState>(
-        //       create: (_) {
-        //         final contactState = ContactState();
-        //         contactState.init(
-        //             Firestore.instance.collection("contacts").snapshots());
-        //         return contactState;
-        //       },
-        //       dispose: (_, counterState) => counterState.dispose(),
-        //       child: Consumer<ContactState>(
-        //         builder: (_, contactState, __) => ContactsView(
-        //           authState: authState,
-        //           contactState: contactState,
-        //         ),
-        //       ),
-        //     );
-        // },
-        onError: (context, error) => PleaseSignIn(),
-        onData: (context, data) {
-          print(data);
-          return Provider<ContactState>(
+        builder: (context, state, init) {
+          if (state.hasError || init == false)
+            return PleaseSignIn();
+          else
+            return Provider<ContactState>(
               create: (_) {
                 final contactState = ContactState();
                 contactState.init(
@@ -54,11 +34,31 @@ class _HomePageState extends State<HomePage> {
               },
               dispose: (_, counterState) => counterState.dispose(),
               child: Consumer<ContactState>(
-                  builder: (_, contactState, __) => ContactsView(
-                        authState: authState,
-                        contactState: contactState,
-                      )));
+                builder: (_, contactState, __) => ContactsView(
+                  authState: authState,
+                  contactState: contactState,
+                ),
+              ),
+            );
         },
+        // waiting: (context) => PleaseSignIn(),
+        // onError: (context, error) => PleaseSignIn(),
+        // onData: (context, data) {
+        //   print(data);
+        //   return Provider<ContactState>(
+        //       create: (_) {
+        //         final contactState = ContactState();
+        //         contactState.init(
+        //             Firestore.instance.collection("contacts").snapshots());
+        //         return contactState;
+        //       },
+        //       dispose: (_, counterState) => counterState.dispose(),
+        //       child: Consumer<ContactState>(
+        //           builder: (_, contactState, __) => ContactsView(
+        //                 authState: authState,
+        //                 contactState: contactState,
+        //               )));
+        // },
       ),
     );
   }
@@ -87,5 +87,14 @@ class PleaseSignIn extends StatelessWidget {
         ),
       ),
     );
+  }
+}
+
+class Loading extends StatelessWidget {
+  const Loading({Key key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(body: Center(child: CircularProgressIndicator()));
   }
 }
