@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_example/utils.dart';
 import 'package:firebase_example/views/home.dart';
 import 'package:flutter/material.dart';
@@ -7,11 +6,26 @@ import 'package:provider/provider.dart';
 
 import 'nanos/auth/auth.dart';
 
-//No need to dispose the providers declared as they are app level now
+class Val extends ChangeNotifier {
+  int n = 20;
+
+  change() async {
+    await Future.delayed(Duration(seconds: 5));
+    n = 40;
+    notifyListeners();
+  }
+}
+
+//No need to dispose the providers declared here as they are app level now
 void main() => runApp(MultiProvider(providers: [
       Provider<AuthState>(
         create: (_) {
           return AuthState()..init(FirebaseAuth.instance.onAuthStateChanged);
+        },
+      ),
+      ChangeNotifierProvider<Val>(
+        create: (_) {
+          return Val()..change();
         },
       )
     ], child: App()));

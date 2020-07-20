@@ -24,7 +24,6 @@ class _CounterAppState extends State<CounterApp> {
   @override
   void initState() {
     super.initState();
-    // _counter.setDefaultMiddlewares([LoggerMiddleWare()]);
     _counter.dispatch(CounterActions.increment);
     _counter.dispatch(CounterActions.increment);
     _counter.dispatch(CounterActions.increment);
@@ -53,7 +52,8 @@ class _CounterAppState extends State<CounterApp> {
           initialState: _counter.state,
           stream: _counter.stream,
           rebuildOnly: (state) => ((state.data ?? 1) % 2 == 0),
-          builder: (context, state) => Center(child: Text(state.toString())),
+          builder: (context, state, init) =>
+              Center(child: Text(state.toString())),
           // onError: (_,   error) => Center(child: Text(error.toString())),
           // onData: (_, data) => Center(child: Text(data.toString())),
         ),
