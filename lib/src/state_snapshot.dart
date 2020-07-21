@@ -1,3 +1,7 @@
+import 'package:flutter/cupertino.dart';
+import 'package:meta/meta.dart';
+
+@immutable
 class StateSnapshot<T> {
   final T data;
   final Object error;
@@ -14,4 +18,15 @@ class StateSnapshot<T> {
   String toString() {
     return hasError ? error.toString() : data.toString();
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is StateSnapshot<T> &&
+        other.data == data &&
+        other.error == error;
+  }
+
+  @override
+  int get hashCode => hashValues(data, error);
 }
