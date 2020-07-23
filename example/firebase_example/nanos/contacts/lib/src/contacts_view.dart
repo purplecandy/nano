@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
-import 'package:provider/provider.dart';
-
-import '../../main.dart';
-import '../auth/auth.dart';
+import 'package:auth/auth.dart';
 import 'contacts_state.dart';
 import 'contacts_widgets.dart';
 
@@ -30,8 +27,6 @@ class _ContactsViewState extends State<ContactsView> {
 
   @override
   Widget build(BuildContext context) {
-    // final val = Provider.of<Val>(context, listen: true);
-    // print(val.n);
     return Scaffold(
       appBar: AppBar(
         title: Text("Contacts"),

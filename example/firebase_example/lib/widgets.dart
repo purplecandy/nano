@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
-import 'nanos/auth/auth.dart';
+import 'package:auth/auth.dart';
 
 class PleaseSignIn extends StatelessWidget {
   final AuthState authState;

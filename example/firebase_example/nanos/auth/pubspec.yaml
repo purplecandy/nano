@@ -1,0 +1,14 @@
+name: auth
+description: An auth module.
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+
+dependencies:
+  firebase_auth: ^0.16.1
+  nano:
+    path: ../../../../
+  flutter:
+    sdk: flutter
+
+flutter:

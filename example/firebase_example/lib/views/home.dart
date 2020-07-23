@@ -5,9 +5,8 @@ import 'package:nano/nano.dart';
 import 'package:provider/provider.dart';
 
 import 'package:firebase_example/widgets.dart';
-import 'package:firebase_example/nanos/auth/auth.dart';
-import 'package:firebase_example/nanos/contacts/contacts.dart';
-import 'package:firebase_example/nanos/contacts/contacts_view.dart';
+import 'package:auth/auth.dart';
+import 'package:contacts/contacts.dart';
 import 'package:firebase_example/utils.dart';
 
 class HomePage extends StatefulWidget {

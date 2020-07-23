@@ -3,8 +3,7 @@ import 'package:firebase_example/views/home.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
-
-import 'nanos/auth/auth.dart';
+import 'package:auth/auth.dart';
 
 class Val extends ChangeNotifier {
   int n = 20;
