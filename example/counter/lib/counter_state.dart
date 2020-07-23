@@ -28,3 +28,10 @@ class CounterState extends StateManager<int, CounterActions> {
     }
   }
 }
+
+class LState extends StateManager<List<int>, dynamic> {
+  LState() : super([0, 2, 3]);
+
+  @override
+  Future<void> reducer(action, Prop props) {}
+}

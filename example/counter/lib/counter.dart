@@ -12,6 +12,7 @@ class CounterApp extends StatefulWidget {
 
 class _CounterAppState extends State<CounterApp> {
   final _counter = CounterState();
+  final _lstate = LState();
 
   void autoIncrement() {
     if (_counter.cData < 50)
@@ -25,9 +26,12 @@ class _CounterAppState extends State<CounterApp> {
   void initState() {
     super.initState();
     _counter.dispatch(CounterActions.increment);
-    _counter.dispatch(CounterActions.increment);
-    _counter.dispatch(CounterActions.increment);
-    _counter.dispatch(CounterActions.increment);
+    print(_lstate.state.data);
+    _lstate.state.data.add(9);
+    print(_lstate.state.data);
+    // _counter.dispatch(CounterActions.increment);
+    // _counter.dispatch(CounterActions.increment);
+    // _counter.dispatch(CounterActions.increment);
   }
 
   @override

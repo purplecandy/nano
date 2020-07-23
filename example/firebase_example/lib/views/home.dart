@@ -1,5 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_example/di/di.dart';
+import 'package:firebase_example/refs.dart';
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +22,12 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   AuthState get authState => widget.authState;
   @override
+  void initState() {
+    super.initState();
+    // Pool().create(contactRef);
+  }
+
+  @override
   Widget build(BuildContext context) {
     return StateBuilder<FirebaseUser>(
       initialState: authState.state,
@@ -30,17 +38,28 @@ class _HomePageState extends State<HomePage> {
             authState: authState,
           );
         else
-          return Provider<ContactState>(
-            create: (_) {
-              return ContactState()
-                ..init(Firestore.instance.collection("contacts").snapshots());
+          return InitializeStore<ContactState>(
+            storeToken: contactRef,
+            dispose: (contactState) {
+              print("Disposing contact state");
+              contactState.dispose();
             },
-            dispose: (_, counterState) => counterState.dispose(),
-            builder: (context, _) => ContactsView(
+            child: (store) => ContactsView(
               authState: authState,
-              contactState: grab<ContactState>(context),
+              contactState: store,
             ),
           );
+        // return Provider<ContactState>(
+        //   create: (_) {
+        //     return ContactState()
+        //       ..init(Firestore.instance.collection("contacts").snapshots());
+        //   },
+        //   dispose: (_, counterState) => counterState.dispose(),
+        //   builder: (context, _) => ContactsView(
+        //     authState: authState,
+        //     contactState: Pool().obtain<ContactState>(contactRef),
+        //   ),
+        // );
       },
       // waiting: (context) => PleaseSignIn(),
       // onError: (context, error) => PleaseSignIn(),
