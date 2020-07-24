@@ -15,6 +15,7 @@ class Dispatcher {
   Map<ActionId, Action> _actions = {};
   List<_Waiting> _waiting = [];
   Map<ActionId, bool> _isCompleted = {};
+  Map<ActionId, dynamic> _proxyVerification = {};
   StreamController<Map<ActionId, bool>> _controller;
   Stream<Map<ActionId, bool>> _stream;
   static Dispatcher instance = Dispatcher._internal();
@@ -61,19 +62,30 @@ class Dispatcher {
       final action = _actions[id];
       if (action.waitFor == null || action.waitFor?.isEmpty == true) {
         final mutations = await _actions[id]();
+
         for (var mutation in mutations) {
-          dispatch(mutation.store, mutation.type);
+          if (action.hasProxyMutation)
+            mutation.store.setLastAction(LastAction(id, mutation.type));
+          else
+            dispatch(mutation.store, mutation.type);
         }
         _actions.remove(id);
-        _isCompleted[id] = true;
-        _controller.add(_isCompleted);
+        if (!action.hasProxyMutation) {
+          _isCompleted[id] = true;
+          _controller.add(_isCompleted);
+        }
       } else {
         _waiting.add(_Waiting(id, action));
       }
     }
   }
 
-  bool verify(ActionId id) => _isCompleted.containsKey(id);
+  bool verify(ActionId id, Mutation mutation) {
+    if (_proxyVerification.containsKey(id)) {
+      return mutation == _proxyVerification[id];
+    }
+    return false;
+  }
 }
 
 /// Create a new actions to be dispatched
@@ -83,4 +95,4 @@ ActionId dAdd(Action action) => Dispatcher.instance.add(action);
 ActionId dnextId() => Dispatcher.instance.nextId();
 
 /// Verify if an action completed successfully
-bool dVerify(ActionId id) => Dispatcher.instance.verify(id);
+// bool dVerify(ActionId id) => Dispatcher.instance.verify(id);

@@ -21,15 +21,22 @@ typedef Dispatch<A> = void Function(
   void Function() onSuccess,
   void Function() onStop,
   void Function(Object error, StackTrace stack) onError,
-  List<Middleware> pre,
 });
 
 typedef ActionWorker<A> = Function(Dispatch<A> put);
 
-abstract class StateManager<T, A> {
+class LastAction {
+  final ActionId id;
+  final dynamic mutationType;
+  LastAction(this.id, this.mutationType);
+}
+
+abstract class Store<T, A> {
   final _defaultMiddlewares = List<Middleware>();
   final _watchers = <A, List<ActionWorker<A>>>{};
   final _queue = _ActionQueue();
+
+  LastAction _lastAction;
 
   /// Controller that manges the actual data events
   BehaviorSubject<StateSnapshot<T>> _controller;
@@ -39,7 +46,7 @@ abstract class StateManager<T, A> {
 
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
-  StateManager([T state]) {
+  Store([T state]) {
     _errorController = PublishSubject<StateSnapshot<T>>();
     if (setInitialState)
       _controller =
@@ -107,75 +114,83 @@ abstract class StateManager<T, A> {
     _defaultMiddlewares.clear();
   }
 
-  Future<void> reducer(A action, Prop props);
+  void setLastAction(LastAction last) => _lastAction = last;
+  bool verifyProxyAction(Mutation mutation) =>
+      Dispatcher.instance.verify(_lastAction.id, _lastAction.mutationType);
 
-  Future<void> _internalDispatch(_QueuedAction qa) async {
-    try {
-      /// Props are values that are passed between middlewares and actions
-      var props = qa.initialProps;
-      final combined = List<Middleware>()
-        ..addAll(_defaultMiddlewares)
-        ..addAll(qa.pre ?? []);
-      for (var middleware in combined) {
-        // final resp = await compute(threadedExecution,
-        //     MutliThreadArgs(middleware, state, qa.actionType, props));
-        final resp = await middleware.run(state, qa.actionType, props);
+  void reducer(A mutation);
 
-        /// Reply of status unkown will cause an exception,
-        /// unkown can will repsent situations that are considerend as traps
-        /// this is abost the state update and [onError] will be called
-        if (resp.isTerminated) {
-          throw ActionTerminatedException(
-              "Action termination requested by middleware: ${middleware.runtimeType}");
-        } else {
-          props = resp;
-        }
-      }
-      await reducer(qa.actionType, props);
-      qa.onSuccess?.call();
-      _notifyWorkers(qa.actionType);
-    } on ActionTerminatedException catch (e) {
-      print(e);
-      qa.onStop?.call();
-    } catch (e, stack) {
-      print("An exception occured when executing the action: ${qa.actionType}");
-      qa.onError?.call(e, stack);
-    } finally {
-      qa.onDone?.call();
-    }
+  void _internalDispatch(_QueuedAction qa) {
+    reducer(qa.mutationType);
+    _notifyWorkers(qa.mutationType);
+    // try {
+    //   /// Props are values that are passed between middlewares and actions
+    //   var props = qa.initialProps;
+    //   final combined = List<Middleware>()
+    //     ..addAll(_defaultMiddlewares)
+    //     ..addAll(qa.pre ?? []);
+    //   for (var middleware in combined) {
+    //     // final resp = await compute(threadedExecution,
+    //     //     MutliThreadArgs(middleware, state, qa.actionType, props));
+    //     final resp = await middleware.run(state, qa.actionType, props);
+
+    //     /// Reply of status unkown will cause an exception,
+    //     /// unkown can will repsent situations that are considerend as traps
+    //     /// this is abost the state update and [onError] will be called
+    //     if (resp.isTerminated) {
+    //       throw ActionTerminatedException(
+    //           "Action termination requested by middleware: ${middleware.runtimeType}");
+    //     } else {
+    //       props = resp;
+    //     }
+    //   }
+    //   await reducer(qa.actionType, props);
+    //   qa.onSuccess?.call();
+    //   _notifyWorkers(qa.actionType);
+    // } on ActionTerminatedException catch (e) {
+    //   print(e);
+    //   qa.onStop?.call();
+    // } catch (e, stack) {
+    //   print("An exception occured when executing the action: ${qa.actionType}");
+    //   qa.onError?.call(e, stack);
+    // } finally {
+    //   qa.onDone?.call();
+    // }
   }
 
   /// Dispatch Actions which will mutate the state
   void dispatch(
-    A action, {
-    Prop initialProps,
+    A mutation,
+    //    {
+    //   Prop initialProps,
 
-    /// When the action is completed
-    void Function() onDone,
+    //   /// When the action is completed
+    //   void Function() onDone,
 
-    /// When the action is successfully completed
-    void Function() onSuccess,
+    //   /// When the action is successfully completed
+    //   void Function() onSuccess,
 
-    /// When a middleware requests to terminate the action
-    void Function() onStop,
+    //   /// When a middleware requests to terminate the action
+    //   void Function() onStop,
 
-    /// When the action fails to complete
-    ///
-    /// You can also force execute onError from a middleware by returning a `Status.unknown`
-    void Function(Object error, StackTrace stack) onError,
+    //   /// When the action fails to complete
+    //   ///
+    //   /// You can also force execute onError from a middleware by returning a `Status.unknown`
+    //   void Function(Object error, StackTrace stack) onError,
 
-    /// Middleware that will be called before the action is processed
-    List<Middleware> pre,
-  }) async {
+    //   /// Middleware that will be called before the action is processed
+    //   List<Middleware> pre,
+    // }
+  ) {
     _queue.enqueue(
       _QueuedAction<A>(
-        actionType: action,
-        initialProps: initialProps,
-        onDone: onDone,
-        onSuccess: onSuccess,
-        onError: onError,
-        pre: pre,
-        onStop: onStop,
+        mutationType: mutation,
+        // initialProps: initialProps,
+        // onDone: onDone,
+        // onSuccess: onSuccess,
+        // onError: onError,
+        // pre: pre,
+        // onStop: onStop,
       ),
       _internalDispatch,
     );
@@ -214,7 +229,7 @@ abstract class StateManager<T, A> {
 }
 
 dispatch(dynamic store, dynamic type) {
-  if (store is StateManager)
+  if (store is Store)
     store.dispatch(type);
   else
     throw Exception("Invalid store");

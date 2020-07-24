@@ -5,19 +5,20 @@ class ActionTerminatedException implements Exception {
 }
 
 class _QueuedAction<A> {
-  final A actionType;
-  final Prop initialProps;
-  final void Function() onDone, onSuccess, onStop;
-  final void Function(Object error, StackTrace stack) onError;
-  final List<Middleware> pre;
-  _QueuedAction(
-      {@required this.actionType,
-      @required this.initialProps,
-      @required this.onDone,
-      @required this.onSuccess,
-      @required this.onError,
-      @required this.onStop,
-      @required this.pre});
+  final A mutationType;
+  // final Prop initialProps;
+  // final void Function() onDone, onSuccess, onStop;
+  // final void Function(Object error, StackTrace stack) onError;
+  // final List<Middleware> pre;
+  _QueuedAction({
+    @required this.mutationType,
+    // @required this.initialProps,
+    // @required this.onDone,
+    // @required this.onSuccess,
+    // @required this.onError,
+    // @required this.onStop,
+    // @required this.pre,
+  });
 }
 
 class _ActionQueue<A> {
@@ -38,10 +39,10 @@ class _ActionQueue<A> {
 
   void _dequeue() => _queue.removeAt(0);
 
-  void onChange(Future<void> Function(_QueuedAction action) cb) async {
+  void onChange(void Function(_QueuedAction action) cb) {
     if (_queue.isNotEmpty) {
       _busy = true;
-      await cb?.call(_queue.first);
+      cb?.call(_queue.first);
       _dequeue();
       onChange(cb);
     }

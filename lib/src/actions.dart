@@ -5,13 +5,13 @@ import 'package:nano/nano.dart';
 
 typedef Future<K> ActionBody<T, K>(T payload);
 
-class Mutation<T extends StateManager> {
-  final T store;
+class Mutation {
+  final Store store;
   final dynamic type;
   Mutation(this.store, this.type);
 }
 
-typedef List<Mutation<T>> ActionMutation<T extends StateManager, TT, K>(
+typedef List<Mutation> ActionMutation<T extends Store, TT, K>(
     K response, TT payload);
 
 class ActionId {
@@ -35,7 +35,7 @@ class Action<T, K> implements Function {
       this.waitFor,
       this.hasProxyMutation});
 
-  Future<List<Mutation<dynamic>>> call() async {
+  Future<List<Mutation>> call() async {
     assert(mutations != null);
     // Result of the computation
     var result;
