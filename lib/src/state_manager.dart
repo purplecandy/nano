@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:nano/nano.dart';
 import 'package:nano/src/utils.dart';
 import 'package:rxdart/rxdart.dart';
 export 'package:rxdart/transformers.dart';
@@ -13,7 +14,7 @@ part 'state_utils.dart';
 /// Author: Nadeem Siddique
 ///
 
-typedef Dispatcher<A> = void Function(
+typedef Dispatch<A> = void Function(
   A action, {
   Prop initialProps,
   void Function() onDone,
@@ -23,7 +24,7 @@ typedef Dispatcher<A> = void Function(
   List<Middleware> pre,
 });
 
-typedef ActionWorker<A> = Function(Dispatcher<A> put);
+typedef ActionWorker<A> = Function(Dispatch<A> put);
 
 abstract class StateManager<T, A> {
   final _defaultMiddlewares = List<Middleware>();
@@ -210,4 +211,11 @@ abstract class StateManager<T, A> {
     _watchers[action].removeWhere((element) => element == worker);
     return true;
   }
+}
+
+dispatch(dynamic store, dynamic type) {
+  if (store is StateManager)
+    store.dispatch(type);
+  else
+    throw Exception("Invalid store");
 }
