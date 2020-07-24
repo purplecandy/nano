@@ -28,17 +28,22 @@ class Action<T, K> implements Function {
   final List<ActionId> waitFor;
   final T payload;
   final ActionMutation<dynamic, T, K> mutations;
-
+  final bool hasProxyMutation;
   Action(this._body,
-      {@required this.payload, @required this.mutations, this.waitFor});
+      {@required this.payload,
+      @required this.mutations,
+      this.waitFor,
+      this.hasProxyMutation});
 
   Future<List<Mutation<dynamic>>> call() async {
     assert(mutations != null);
     // Result of the computation
     var result;
     if (_body != null) result = await Future.microtask(() => _body(payload));
-    assert(mutations(result, payload).isNotEmpty);
-    return mutations(result, payload);
+    final muts = mutations(result, payload);
+    if (!hasProxyMutation && muts.isEmpty)
+      throw Exception("Action has no mutations");
+    return muts;
   }
 
   void clear(ActionId id) {
@@ -51,15 +56,19 @@ class Action<T, K> implements Function {
 class ActionRef<T, K> implements Function {
   ActionBody<T, K> _body;
   final ActionMutation<dynamic, T, K> mutations;
-  ActionRef(this._body, {@required this.mutations});
+  final bool hasProxyMutation;
+  ActionRef(this._body,
+      {@required this.mutations, this.hasProxyMutation = false});
 
-  Action<T, K> call(T payload, {List<ActionId> waitFor}) {
+  Action<T, K> call(
+    T payload, {
+    List<ActionId> waitFor,
+  }) {
     assert(mutations != null);
-    return Action<T, K>(
-      _body,
-      mutations: mutations,
-      payload: payload,
-      waitFor: waitFor,
-    );
+    return Action<T, K>(_body,
+        mutations: mutations,
+        payload: payload,
+        waitFor: waitFor,
+        hasProxyMutation: hasProxyMutation);
   }
 }

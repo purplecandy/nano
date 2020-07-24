@@ -32,7 +32,8 @@ class _ContactsViewState extends State<ContactsView> {
         title: Text("Contacts"),
         actions: <Widget>[
           FlatButton(
-              onPressed: () => authState.dispatch(AuthActions.signOut),
+              onPressed: () =>
+                  Dispatcher.instance.add(AuthActions.signOutAction(authState)),
               child: Text("Logout"))
         ],
       ),

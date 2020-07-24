@@ -27,6 +27,9 @@ class Dispatcher {
 
   ActionId _generateToken() => ActionId(_prefix + (_lastId++).toString());
 
+  /// Returns the next id
+  ActionId nextId() => ActionId(_prefix + (_lastId + 1).toString());
+
   Stream<Map<ActionId, bool>> get onActionComplete => _stream;
 
   void _onChange(Map<ActionId, bool> event) {
@@ -69,4 +72,15 @@ class Dispatcher {
       }
     }
   }
+
+  bool verify(ActionId id) => _isCompleted.containsKey(id);
 }
+
+/// Create a new actions to be dispatched
+ActionId dAdd(Action action) => Dispatcher.instance.add(action);
+
+/// Get the Id of the next possible Action
+ActionId dnextId() => Dispatcher.instance.nextId();
+
+/// Verify if an action completed successfully
+bool dVerify(ActionId id) => Dispatcher.instance.verify(id);

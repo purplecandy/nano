@@ -15,9 +15,10 @@ class PleaseSignIn extends StatelessWidget {
         children: <Widget>[
           Center(child: Text("Please Sign In")),
           FlatButton(
-            onPressed: () => authState.dispatch(AuthActions.signIn,
-                initialProps: Prop.success(
-                    Credentials("example@example.com", "example"))),
+            onPressed: () {
+              dAdd(AuthActions.signInAction(SignInParams(
+                  authState, Credentials("example@example.com", "example"))));
+            },
             child: Text("Login"),
             color: Colors.blue,
           )
