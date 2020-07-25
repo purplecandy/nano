@@ -8,7 +8,7 @@ enum ContactAction {
   delete,
 }
 
-class ContactState extends StateManager<ContactList, ContactAction>
+class ContactState extends Store<ContactList, ContactAction>
     with ProxyStream<QuerySnapshot> {
   ContactState() : super(ContactList(status: Status.loading));
 
@@ -28,21 +28,21 @@ class ContactState extends StateManager<ContactList, ContactAction>
   }
 
   @override
-  Future<void> reducer(ContactAction action, Prop props) async {
-    String name = props.data;
-    switch (action) {
-      case ContactAction.add:
-        Firestore.instance
-            .collection("contacts")
-            .document(name)
-            .setData({"name": name});
+  Future<void> reducer(ContactAction action) async {
+    // String name = props.data
+    // switch (action) {
+    //   case ContactAction.add:
+    //     Firestore.instance
+    //         .collection("contacts")
+    //         .document(name)
+    //         .setData({"name": name});
 
-        break;
-      case ContactAction.delete:
-        Firestore.instance.collection("contacts").document(name).delete();
-        break;
-      default:
-    }
+    //     break;
+    //   case ContactAction.delete:
+    //     Firestore.instance.collection("contacts").document(name).delete();
+    //     break;
+    //   default:
+    // }
   }
 
   @override

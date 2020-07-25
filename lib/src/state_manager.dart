@@ -36,7 +36,9 @@ abstract class Store<T, A> {
   final _watchers = <A, List<ActionWorker<A>>>{};
   final _queue = _ActionQueue();
 
-  LastAction _lastAction;
+  ActionId _lastAction;
+
+  ActionId get lastAction => _lastAction;
 
   /// Controller that manges the actual data events
   BehaviorSubject<StateSnapshot<T>> _controller;
@@ -114,9 +116,7 @@ abstract class Store<T, A> {
     _defaultMiddlewares.clear();
   }
 
-  void setLastAction(LastAction last) => _lastAction = last;
-  bool verifyProxyAction(Mutation mutation) =>
-      Dispatcher.instance.verify(_lastAction.id, _lastAction.mutationType);
+  void setLastAction(ActionId last) => _lastAction = last;
 
   void reducer(A mutation);
 

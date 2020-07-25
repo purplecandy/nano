@@ -1,6 +1,8 @@
 import 'package:meta/meta.dart';
 import 'dart:async';
 
+import 'package:nano/nano.dart';
+
 abstract class ProxyStream<T> {
   StreamSubscription<T> _subscription;
 
@@ -13,6 +15,23 @@ abstract class ProxyStream<T> {
       },
       onError: (error) => mapper(isError: true, error: error),
     );
+  }
+
+  bool _verifyProxyAction(ActionId id) {
+    try {
+      return Dispatcher.instance.verify(id);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  void proxyReducer(Store store, dynamic mutation) {
+    if (_verifyProxyAction(store.lastAction))
+      store.reducer(mutation);
+    else
+      print("Skipping Mutation: Unauthorised Action");
+    Dispatcher.instance.completeProxyAction(store.lastAction);
   }
 
   @mustCallSuper

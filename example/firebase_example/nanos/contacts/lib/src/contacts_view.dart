@@ -22,7 +22,7 @@ class _ContactsViewState extends State<ContactsView> {
   }
 
   void onCreate(String name) {
-    contactState.dispatch(ContactAction.add, initialProps: Prop.success(name));
+    // contactState.dispatch(ContactAction.add, initialProps: Prop.success(name));
   }
 
   @override

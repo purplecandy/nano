@@ -21,8 +21,9 @@ class AuthActions {
   // --> AuthState.reducer is called from proxy mapper
   // --> reducer verifies if action was successfull
 
-  static final signInAction = ActionRef<SignInParams, FirebaseUser>(
+  static final signInAction = ProxyActionRef<SignInParams, FirebaseUser>(
     (payload) async {
+      FirebaseAuth.instance.signOut();
       AuthResult result =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: payload.creds.email,
@@ -30,16 +31,14 @@ class AuthActions {
       );
       return result.user;
     },
-    hasProxyMutation: true,
-    mutations: (result, payload) => [],
+    proxyStores: (payload) => [payload.store],
   );
 
-  static final signOutAction = ActionRef<AuthState, FirebaseUser>(
+  static final signOutAction = ProxyActionRef<AuthState, FirebaseUser>(
     (payload) async {
       await FirebaseAuth.instance.signOut();
       return;
     },
-    hasProxyMutation: true,
-    mutations: (result, payload) => [],
+    proxyStores: (payload) => [payload],
   );
 }

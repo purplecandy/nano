@@ -14,6 +14,8 @@ class Mutation {
 typedef List<Mutation> ActionMutation<T extends Store, TT, K>(
     K response, TT payload);
 
+typedef List<Store> ProxyStores<T>(T payload);
+
 class ActionId {
   String token;
   ActionId(this.token);
@@ -29,10 +31,12 @@ class Action<T, K> implements Function {
   final T payload;
   final ActionMutation<dynamic, T, K> mutations;
   final bool hasProxyMutation;
+  final ProxyStores<T> proxyStores;
   Action(this._body,
       {@required this.payload,
       @required this.mutations,
       this.waitFor,
+      this.proxyStores,
       this.hasProxyMutation});
 
   Future<List<Mutation>> call() async {
@@ -44,6 +48,15 @@ class Action<T, K> implements Function {
     if (!hasProxyMutation && muts.isEmpty)
       throw Exception("Action has no mutations");
     return muts;
+  }
+
+  List<Store> getProxyStores() => proxyStores(payload);
+
+  Future<void> proxyRun() async {
+    assert(body != null);
+    assert(proxyStores(payload) != null &&
+        proxyStores(payload)?.isNotEmpty == true);
+    await Future.microtask(() => _body(payload));
   }
 
   void clear(ActionId id) {
@@ -70,5 +83,31 @@ class ActionRef<T, K> implements Function {
         payload: payload,
         waitFor: waitFor,
         hasProxyMutation: hasProxyMutation);
+  }
+}
+
+/// ActionRef will return a copy of Action which can be passed to the dispatcher to mutate changes
+class ProxyActionRef<T, K> implements Function {
+  ActionBody<T, K> _body;
+  final List<Store> Function(T payload) proxyStores;
+  final bool hasProxyMutation = true;
+  ProxyActionRef(
+    this._body, {
+    @required this.proxyStores,
+  });
+
+  Action<T, K> call(
+    T payload, {
+    List<ActionId> waitFor,
+  }) {
+    assert(_body != null);
+    return Action<T, K>(
+      _body,
+      mutations: null,
+      payload: payload,
+      waitFor: waitFor,
+      hasProxyMutation: hasProxyMutation,
+      proxyStores: proxyStores,
+    );
   }
 }

@@ -39,9 +39,9 @@ class _ContactsWidgetState extends State<ContactsWidget> {
                   trailing: IconButton(
                       icon: Icon(Icons.delete),
                       onPressed: () {
-                        contactState.dispatch(ContactAction.delete,
-                            initialProps:
-                                Prop.success(data.contacts[index].name));
+                        // contactState.dispatch(ContactAction.delete,
+                        //     initialProps:
+                        //         Prop.success(data.contacts[index].name));
                       }),
                 ),
               ),

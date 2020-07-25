@@ -61,30 +61,39 @@ class Dispatcher {
     if (_actions.containsKey(id)) {
       final action = _actions[id];
       if (action.waitFor == null || action.waitFor?.isEmpty == true) {
-        final mutations = await _actions[id]();
-
-        for (var mutation in mutations) {
-          if (action.hasProxyMutation)
-            mutation.store.setLastAction(LastAction(id, mutation.type));
-          else
+        if (action.hasProxyMutation) {
+          // will be mutated by proxy stream
+          for (var store in action.getProxyStores()) {
+            store.setLastAction(id);
+          }
+          // this should cause change in the proxy stream
+          _proxyVerification[id] = id;
+          await action.proxyRun();
+        } else {
+          // will be mutated by dispatch
+          final mutations = await _actions[id]();
+          for (var mutation in mutations) {
             dispatch(mutation.store, mutation.type);
-        }
-        _actions.remove(id);
-        if (!action.hasProxyMutation) {
+          }
           _isCompleted[id] = true;
           _controller.add(_isCompleted);
         }
+        _actions.remove(id);
       } else {
         _waiting.add(_Waiting(id, action));
       }
     }
   }
 
-  bool verify(ActionId id, Mutation mutation) {
+  bool verify(ActionId id, [Mutation mutation]) {
+    return _proxyVerification.containsKey(id);
+  }
+
+  void completeProxyAction(ActionId id) {
     if (_proxyVerification.containsKey(id)) {
-      return mutation == _proxyVerification[id];
+      _proxyVerification.remove(id);
+      _isCompleted[id] = true;
     }
-    return false;
   }
 }
 

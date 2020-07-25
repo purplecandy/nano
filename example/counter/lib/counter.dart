@@ -13,14 +13,13 @@ class CounterApp extends StatefulWidget {
 
 class _CounterAppState extends State<CounterApp> {
   final _counter = CounterState();
-  final _lstate = LState();
 
   void autoIncrement() {
-    if (_counter.cData < 50)
-      _counter.dispatch(CounterActions.increment, onSuccess: () async {
-        await Future.delayed(Duration(seconds: 1));
-        autoIncrement();
-      });
+    // if (_counter.cData < 50)
+    //   _counter.dispatch(CounterActions.increment, onSuccess: () async {
+    //     await Future.delayed(Duration(seconds: 1));
+    //     autoIncrement();
+    //   });
   }
 
   @override
@@ -77,8 +76,8 @@ class _CounterAppState extends State<CounterApp> {
               heroTag: null,
               onPressed: () => _counter.dispatch(
                 CounterActions.increment,
-                onSuccess: () => print(_counter.cData),
-                onError: (e, stack) => print(stack),
+                // onSuccess: () => print(_counter.cData),
+                // onError: (e, stack) => print(stack),
               ),
               child: Icon(Icons.add),
             ),

@@ -38,17 +38,18 @@ class _HomePageState extends State<HomePage> {
             authState: authState,
           );
         else
-          return InitializeStore<ContactState>(
-            storeToken: contactRef,
-            dispose: (contactState) {
-              print("Disposing contact state");
-              contactState.dispose();
-            },
-            child: (store) => ContactsView(
-              authState: authState,
-              contactState: store,
-            ),
-          );
+          return LoggedIn();
+        // return InitializeStore<ContactState>(
+        //   storeToken: contactRef,
+        //   dispose: (contactState) {
+        //     print("Disposing contact state");
+        //     contactState.dispose();
+        //   },
+        //   child: (store) => ContactsView(
+        //     authState: authState,
+        //     contactState: store,
+        //   ),
+        // );
         // return Provider<ContactState>(
         //   create: (_) {
         //     return ContactState()
@@ -79,6 +80,31 @@ class _HomePageState extends State<HomePage> {
       //                 contactState: contactState,
       //               )));
       // },
+    );
+  }
+}
+
+class LoggedIn extends StatefulWidget {
+  LoggedIn({Key key}) : super(key: key);
+
+  @override
+  _LoggedInState createState() => _LoggedInState();
+}
+
+class _LoggedInState extends State<LoggedIn> {
+  @override
+  Widget build(BuildContext context) {
+    final authState = Pool().obtain(authRef);
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Contacts"),
+        actions: <Widget>[
+          FlatButton(
+              onPressed: () =>
+                  Dispatcher.instance.add(AuthActions.signOutAction(authState)),
+              child: Text("Logout"))
+        ],
+      ),
     );
   }
 }
