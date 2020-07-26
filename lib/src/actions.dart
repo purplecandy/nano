@@ -18,7 +18,9 @@ typedef List<Store> ProxyStores<T>(T payload);
 
 class ActionId {
   String token;
-  ActionId(this.token);
+  final void Function(Object error) onError;
+  final void Function() onDone;
+  ActionId(this.token, {this.onError, this.onDone});
 
   @override
   String toString() => "Action - $token";
@@ -83,6 +85,17 @@ class ActionRef<T, K> implements Function {
         payload: payload,
         waitFor: waitFor,
         hasProxyMutation: hasProxyMutation);
+  }
+
+  ActionId run(T payload,
+      {List<ActionId> waitFor,
+      void Function(Object error) onError,
+      void Function() onDone}) {
+    return dAdd(
+      call(payload, waitFor: waitFor),
+      onDone: onDone,
+      onError: onError,
+    );
   }
 }
 

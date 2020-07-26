@@ -26,7 +26,7 @@ class Dispatcher {
     _stream.listen(_onChange);
   }
 
-  ActionId _generateToken() => ActionId(_prefix + (_lastId++).toString());
+  String _generateToken() => (_prefix + (_lastId++).toString());
 
   /// Returns the next id
   ActionId nextId() => ActionId(_prefix + (_lastId + 1).toString());
@@ -50,8 +50,10 @@ class Dispatcher {
     }
   }
 
-  ActionId add(Action action) {
-    final actionId = _generateToken();
+  ActionId add(Action action,
+      {void Function(Object error) onError, void Function() onDone}) {
+    final token = _generateToken();
+    final actionId = ActionId(token, onError: onError, onDone: onDone);
     _actions[actionId] = action;
     _execute(actionId);
     return actionId;
@@ -61,24 +63,32 @@ class Dispatcher {
     if (_actions.containsKey(id)) {
       final action = _actions[id];
       if (action.waitFor == null || action.waitFor?.isEmpty == true) {
-        if (action.hasProxyMutation) {
-          // will be mutated by proxy stream
-          for (var store in action.getProxyStores()) {
-            store.setLastAction(id);
+        try {
+          if (action.hasProxyMutation) {
+            // will be mutated by proxy stream
+            for (var store in action.getProxyStores()) {
+              store.setLastAction(id);
+            }
+            // this should cause change in the proxy stream
+            _proxyVerification[id] = id;
+            await action.proxyRun();
+          } else {
+            // will be mutated by dispatch
+            final mutations = await _actions[id]();
+            for (var mutation in mutations) {
+              dispatch(mutation.store, mutation.type);
+            }
+            _isCompleted[id] = true;
+            _controller.add(_isCompleted);
+            id.onDone?.call();
           }
-          // this should cause change in the proxy stream
-          _proxyVerification[id] = id;
-          await action.proxyRun();
-        } else {
-          // will be mutated by dispatch
-          final mutations = await _actions[id]();
-          for (var mutation in mutations) {
-            dispatch(mutation.store, mutation.type);
-          }
-          _isCompleted[id] = true;
-          _controller.add(_isCompleted);
+        } catch (e, stack) {
+          print(e);
+          print(stack);
+          id.onError?.call(e);
+        } finally {
+          _actions.remove(id);
         }
-        _actions.remove(id);
       } else {
         _waiting.add(_Waiting(id, action));
       }
@@ -93,12 +103,16 @@ class Dispatcher {
     if (_proxyVerification.containsKey(id)) {
       _proxyVerification.remove(id);
       _isCompleted[id] = true;
+      _controller.add(_isCompleted);
+      id.onDone?.call();
     }
   }
 }
 
 /// Create a new actions to be dispatched
-ActionId dAdd(Action action) => Dispatcher.instance.add(action);
+ActionId dAdd(Action action,
+        {void Function(Object error) onError, void Function() onDone}) =>
+    Dispatcher.instance.add(action, onDone: onDone, onError: onError);
 
 /// Get the Id of the next possible Action
 ActionId dnextId() => Dispatcher.instance.nextId();
