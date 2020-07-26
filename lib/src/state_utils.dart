@@ -30,8 +30,8 @@ class _ActionQueue<A> {
   bool get isEmpty => _queue.isEmpty;
   bool get isNotEmpty => _queue.isNotEmpty;
 
-  void enqueue(_QueuedAction<A> action,
-      Future<void> Function(_QueuedAction action) callback) {
+  void enqueue(
+      _QueuedAction<A> action, Function(_QueuedAction action) callback) {
     _queue.add(action);
 
     if (_busy == false) onChange(callback);
