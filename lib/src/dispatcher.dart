@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:nano/nano.dart';
 import 'package:nano/src/actions.dart';
 

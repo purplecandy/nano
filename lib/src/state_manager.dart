@@ -5,6 +5,7 @@ import 'package:nano/nano.dart';
 import 'package:nano/src/utils.dart';
 import 'package:rxdart/rxdart.dart';
 export 'package:rxdart/transformers.dart';
+import 'package:rxdart/subjects.dart';
 import 'package:meta/meta.dart';
 import 'utils.dart';
 import 'middleware.dart';
@@ -31,6 +32,60 @@ class LastAction {
   LastAction(this.id, this.mutationType);
 }
 
+class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
+  final BehaviorSubject<T> _subject;
+  T _cachedValue;
+  bool _hasError;
+
+  factory ModifiedBehaviorSubject({
+    void Function() onListen,
+    void Function() onCancel,
+    bool sync = false,
+  }) {
+    return ModifiedBehaviorSubject._(
+        BehaviorSubject<T>(onListen: onListen, onCancel: onCancel, sync: sync));
+  }
+
+  factory ModifiedBehaviorSubject.seeded(
+    T value, {
+    void Function() onListen,
+    void Function() onCancel,
+    bool sync = false,
+  }) {
+    return ModifiedBehaviorSubject._(BehaviorSubject<T>.seeded(value,
+        onListen: onListen, onCancel: onCancel, sync: sync));
+  }
+
+  ModifiedBehaviorSubject._(this._subject) : super(_subject, _subject) {
+    _cachedValue = _subject.value;
+  }
+
+  @override
+  void onAdd(T event) {
+    _hasError = false;
+    _cachedValue = event;
+  }
+
+  @override
+  void onAddError(Object error, [StackTrace stackTrace]) {
+    _hasError = true;
+  }
+
+  /// A boolean that return true if the last event emitted was an error
+  bool get hasError => _hasError;
+
+  @override
+  bool get hasValue => _subject.hasValue;
+
+  get sub => _subject;
+
+  @override
+  T get value => _subject.value;
+
+  /// Returns the last cached value emitted
+  T get cachedValue => _cachedValue;
+}
+
 abstract class Store<T, A> {
   final _defaultMiddlewares = List<Middleware>();
   final _watchers = <A, List<ActionWorker<A>>>{};
@@ -41,20 +96,20 @@ abstract class Store<T, A> {
   ActionId get lastAction => _lastAction;
 
   /// Controller that manges the actual data events
-  BehaviorSubject<StateSnapshot<T>> _controller;
+  ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
 
   /// Controller that only manges the error events
-  PublishSubject<StateSnapshot<T>> _errorController;
+  // PublishSubject<StateSnapshot<T>> _errorController;
 
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
   Store([T state]) {
-    _errorController = PublishSubject<StateSnapshot<T>>();
+    // _errorController = PublishSubject<StateSnapshot<T>>();
     if (setInitialState)
-      _controller =
-          BehaviorSubject<StateSnapshot<T>>.seeded(_initialState(state));
+      _controller = ModifiedBehaviorSubject<StateSnapshot<T>>.seeded(
+          _initialState(state));
     else
-      _controller = BehaviorSubject<StateSnapshot<T>>();
+      _controller = ModifiedBehaviorSubject<StateSnapshot<T>>();
   }
 
   bool get setInitialState => true;
@@ -67,17 +122,18 @@ abstract class Store<T, A> {
       : StateSnapshot(null, _lastEmittedError);
 
   ///Controller of the event stream
-  BehaviorSubject<StateSnapshot<T>> get controller => _controller;
+  ModifiedBehaviorSubject<StateSnapshot<T>> get controller => _controller;
 
   ///Stream that recieves both events and errors as data
-  Stream<StateSnapshot<T>> get _mergedStream =>
-      _controller.stream.mergeWith([_errorController.stream]);
+  // Stream<StateSnapshot<T>> get _mergedStream =>
+  //     _controller.stream.mergeWith([_errorController.stream]);
 
-  Stream<StateSnapshot<T>> get stream =>
-      _mergedStream.transform(StreamTransformer.fromHandlers(
-        handleData: (data, sink) => sink.add(state),
-        handleError: (error, stackTrace, sink) => sink.addError(state),
-      ));
+  Stream<StateSnapshot<T>> get stream => _controller.stream;
+  // Stream<StateSnapshot<T>> get stream =>
+  //     _mergedStream.transform(StreamTransformer.fromHandlers(
+  //       handleData: (data, sink) => sink.add(state),
+  //       handleError: (error, stackTrace, sink) => sink.addError(state),
+  //     ));
 
   /// It returns a stream of `T` insted of [StateSnapshot]
   ///
@@ -87,10 +143,8 @@ abstract class Store<T, A> {
       handleError: (error, stackTrace, sink) =>
           sink.addError((error as StateSnapshot).error)));
 
-  /// Returns the [StateSnapshot.data] from last emitted state.
-  ///
-  /// It will not be overridden by an error
-  T get cData => _controller.value.data;
+  /// Last emitted cached data
+  T get cData => _controller.cachedValue.data;
 
   /// Emit a new state without error
   @protected
@@ -105,12 +159,13 @@ abstract class Store<T, A> {
   void updateStateWithError(Object error) {
     assert(error != null);
     _lastEmittedError = error;
-    _errorController.addError(StateSnapshot<T>(null, _lastEmittedError));
+    _controller.addError(StateSnapshot<T>(null, error));
+    // _errorController.addError(StateSnapshot<T>(null, _lastEmittedError));
   }
 
   void dispose() {
     _controller.close();
-    _errorController.close();
+    // _errorController.close();
     _queue.clear();
     _watchers.clear();
     _defaultMiddlewares.clear();
