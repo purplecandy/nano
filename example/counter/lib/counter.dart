@@ -29,9 +29,16 @@ class _CounterAppState extends State<CounterApp> {
       print(event);
     });
     var id = Dispatcher.instance.add(incrementRef(_counter));
-    print(id.token);
-    id = Dispatcher.instance.add(decrementRef(_counter, waitFor: [id]));
-    print(id.token);
+
+    // print(id.token);
+    // id = Dispatcher.instance.add(decrementRef(_counter, waitFor: [id]),
+    //     onError: (e) {
+    //   print(e);
+    // }, onDone: () {
+    //   print("Oh boy");
+    //   print(_counter.state);
+    // });
+    // print(id.token);
     // _counter.dispatch(CounterActions.increment);
     // print(_lstate.state.data);
     // _lstate.state.data.add(9);
@@ -40,6 +47,9 @@ class _CounterAppState extends State<CounterApp> {
     // _counter.dispatch(CounterActions.increment);
     // _counter.dispatch(CounterActions.increment);
   }
+
+  void handleError(Object error) => print("Error $error");
+  void handleDone() => print("Action completed");
 
   @override
   Widget build(BuildContext context) {
@@ -74,11 +84,8 @@ class _CounterAppState extends State<CounterApp> {
             FloatingActionButton(
               mini: true,
               heroTag: null,
-              onPressed: () => _counter.dispatch(
-                CounterActions.increment,
-                // onSuccess: () => print(_counter.cData),
-                // onError: (e, stack) => print(stack),
-              ),
+              onPressed: () => incrementRef(_counter,
+                  onError: handleError, onDone: handleDone),
               child: Icon(Icons.add),
             ),
             FloatingActionButton(
