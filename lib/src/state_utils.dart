@@ -6,19 +6,7 @@ class ActionTerminatedException implements Exception {
 
 class _QueuedAction<A> {
   final A mutationType;
-  // final Prop initialProps;
-  // final void Function() onDone, onSuccess, onStop;
-  // final void Function(Object error, StackTrace stack) onError;
-  // final List<Middleware> pre;
-  _QueuedAction({
-    @required this.mutationType,
-    // @required this.initialProps,
-    // @required this.onDone,
-    // @required this.onSuccess,
-    // @required this.onError,
-    // @required this.onStop,
-    // @required this.pre,
-  });
+  _QueuedAction({@required this.mutationType});
 }
 
 class _ActionQueue<A> {

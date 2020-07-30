@@ -98,9 +98,6 @@ abstract class Store<T, A> {
   /// Controller that manges the actual data events
   ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
 
-  /// Controller that only manges the error events
-  // PublishSubject<StateSnapshot<T>> _errorController;
-
   /// A publishSubject doesn't hold values hence a store to save the last error
   Object _lastEmittedError;
   Store([T state]) {
@@ -124,16 +121,7 @@ abstract class Store<T, A> {
   ///Controller of the event stream
   ModifiedBehaviorSubject<StateSnapshot<T>> get controller => _controller;
 
-  ///Stream that recieves both events and errors as data
-  // Stream<StateSnapshot<T>> get _mergedStream =>
-  //     _controller.stream.mergeWith([_errorController.stream]);
-
   Stream<StateSnapshot<T>> get stream => _controller.stream;
-  // Stream<StateSnapshot<T>> get stream =>
-  //     _mergedStream.transform(StreamTransformer.fromHandlers(
-  //       handleData: (data, sink) => sink.add(state),
-  //       handleError: (error, stackTrace, sink) => sink.addError(state),
-  //     ));
 
   /// It returns a stream of `T` insted of [StateSnapshot]
   ///
@@ -160,12 +148,10 @@ abstract class Store<T, A> {
     assert(error != null);
     _lastEmittedError = error;
     _controller.addError(StateSnapshot<T>(null, error));
-    // _errorController.addError(StateSnapshot<T>(null, _lastEmittedError));
   }
 
   void dispose() {
     _controller.close();
-    // _errorController.close();
     _queue.clear();
     _watchers.clear();
     _defaultMiddlewares.clear();
@@ -178,75 +164,14 @@ abstract class Store<T, A> {
   void _internalDispatch(_QueuedAction qa) {
     reducer(qa.mutationType);
     _notifyWorkers(qa.mutationType);
-    // try {
-    //   /// Props are values that are passed between middlewares and actions
-    //   var props = qa.initialProps;
-    //   final combined = List<Middleware>()
-    //     ..addAll(_defaultMiddlewares)
-    //     ..addAll(qa.pre ?? []);
-    //   for (var middleware in combined) {
-    //     // final resp = await compute(threadedExecution,
-    //     //     MutliThreadArgs(middleware, state, qa.actionType, props));
-    //     final resp = await middleware.run(state, qa.actionType, props);
-
-    //     /// Reply of status unkown will cause an exception,
-    //     /// unkown can will repsent situations that are considerend as traps
-    //     /// this is abost the state update and [onError] will be called
-    //     if (resp.isTerminated) {
-    //       throw ActionTerminatedException(
-    //           "Action termination requested by middleware: ${middleware.runtimeType}");
-    //     } else {
-    //       props = resp;
-    //     }
-    //   }
-    //   await reducer(qa.actionType, props);
-    //   qa.onSuccess?.call();
-    //   _notifyWorkers(qa.actionType);
-    // } on ActionTerminatedException catch (e) {
-    //   print(e);
-    //   qa.onStop?.call();
-    // } catch (e, stack) {
-    //   print("An exception occured when executing the action: ${qa.actionType}");
-    //   qa.onError?.call(e, stack);
-    // } finally {
-    //   qa.onDone?.call();
-    // }
   }
 
   /// Dispatch Actions which will mutate the state
   void dispatch(
     A mutation,
-    //    {
-    //   Prop initialProps,
-
-    //   /// When the action is completed
-    //   void Function() onDone,
-
-    //   /// When the action is successfully completed
-    //   void Function() onSuccess,
-
-    //   /// When a middleware requests to terminate the action
-    //   void Function() onStop,
-
-    //   /// When the action fails to complete
-    //   ///
-    //   /// You can also force execute onError from a middleware by returning a `Status.unknown`
-    //   void Function(Object error, StackTrace stack) onError,
-
-    //   /// Middleware that will be called before the action is processed
-    //   List<Middleware> pre,
-    // }
   ) {
     _queue.enqueue(
-      _QueuedAction<A>(
-        mutationType: mutation,
-        // initialProps: initialProps,
-        // onDone: onDone,
-        // onSuccess: onSuccess,
-        // onError: onError,
-        // pre: pre,
-        // onStop: onStop,
-      ),
+      _QueuedAction<A>(mutationType: mutation),
       _internalDispatch,
     );
   }

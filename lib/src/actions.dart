@@ -18,8 +18,6 @@ typedef List<Store> ProxyStores<T>(T payload);
 
 class ActionId {
   String token;
-  // final void Function(Object error) onError;
-  // final void Function() onDone;
   ActionId(this.token);
 
   @override
