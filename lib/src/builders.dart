@@ -30,7 +30,6 @@ class StateBuilder<T> extends StatefulWidget {
         assert(initialState != null),
         assert(stream != null),
         super(key: key);
-  // true &&
   @override
   _StateBuilderState createState() => _StateBuilderState<T>();
 }
@@ -45,28 +44,30 @@ class _StateBuilderState<T> extends State<StateBuilder<T>> {
     if (widget.initialState.waiting) _unInitialized = true;
     _hasError = widget.initialState.hasError;
     _lastValue = widget.initialState;
-    _subscription = stream.listen(
-      (event) {
-        if (widget.rebuildOnly != null) {
-          if (widget.rebuildOnly.call(event)) {
-            _hasError = false;
-            _lastValue = event;
-          }
-        } else {
-          _hasError = false;
+    _subscription = stream.listen((event) {
+      if (widget.rebuildOnly != null) {
+        if (widget.rebuildOnly.call(event)) {
           _lastValue = event;
         }
+      } else {
+        _lastValue = event;
+      }
+      _hasError = false;
+      _unInitialized = false;
+      setState(() {});
+    }, onError: (snap) {
+      setState(() {
         _unInitialized = false;
-        setState(() {});
-      },
-      onError: (snap) {
-        setState(() {
-          _unInitialized = false;
-          _hasError = true;
-          _lastValue = snap;
-        });
-      },
-    );
+        _hasError = true;
+        _lastValue = snap;
+      });
+    }, onDone: () {
+      if (mounted) {
+        print("Your store has been disposed but you have an active listener");
+        print(
+            "Acoording to the Flutter Widget tree, the listerners should be disposed");
+      }
+    });
   }
 
   @override
