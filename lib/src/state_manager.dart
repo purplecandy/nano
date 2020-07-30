@@ -60,12 +60,14 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
     _cachedValue = _subject.value;
   }
 
+  @protected
   @override
   void onAdd(T event) {
     _hasError = false;
     _cachedValue = event;
   }
 
+  @protected
   @override
   void onAddError(Object error, [StackTrace stackTrace]) {
     _hasError = true;
@@ -134,6 +136,20 @@ abstract class Store<T, A> {
   /// Last emitted cached data
   T get cData => _controller.cachedValue.data;
 
+  // Directly listen to the store's state changes
+  StreamSubscription<StateSnapshot<T>> listen(
+      void onData(StateSnapshot<T> value),
+      {Function onError,
+      void onDone(),
+      bool cancelOnError}) {
+    return controller.listen(
+      onData,
+      onDone: onDone,
+      cancelOnError: cancelOnError,
+      onError: onError,
+    );
+  }
+
   /// Emit a new state without error
   @protected
   void updateState(T data) {
@@ -166,6 +182,8 @@ abstract class Store<T, A> {
     _notifyWorkers(qa.mutationType);
   }
 
+  /// This will made private every change has to go through Dispatcher as action.
+  /// But I'm still figuring out some good usecase for this
   /// Dispatch Actions which will mutate the state
   void dispatch(
     A mutation,
@@ -185,25 +203,25 @@ abstract class Store<T, A> {
   }
 
   /// Add a listerner that executes everytime the specified action is executed
-  void addWorker(A action, ActionWorker<A> worker) {
-    if (_watchers.containsKey(action))
-      _watchers[action].add(worker);
+  void addWorker(A mutation, ActionWorker<A> worker) {
+    if (_watchers.containsKey(mutation))
+      _watchers[mutation].add(worker);
     else
-      _watchers[action] = <ActionWorker<A>>[worker];
+      _watchers[mutation] = <ActionWorker<A>>[worker];
   }
 
-  /// Executes all workers attached to the specified action
-  void _notifyWorkers(A action) {
-    if (_watchers.containsKey(action))
-      for (var worker in _watchers[action]) {
+  /// Executes all workers attached to the specified mutation
+  void _notifyWorkers(A mutation) {
+    if (_watchers.containsKey(mutation))
+      for (var worker in _watchers[mutation]) {
         worker.call(dispatch);
       }
   }
 
   /// Returns `true` if a worker is removed
-  bool removeWorker(A action, ActionWorker worker) {
-    if (!_watchers.containsKey(action)) return false;
-    _watchers[action].removeWhere((element) => element == worker);
+  bool removeWorker(A mutation, ActionWorker worker) {
+    if (!_watchers.containsKey(mutation)) return false;
+    _watchers[mutation].removeWhere((element) => element == worker);
     return true;
   }
 }
