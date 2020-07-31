@@ -12,23 +12,23 @@ Nano's unidirectional data flow diagram
 ![Nano diagram](assets/nano-diagram.png)
 
 
-**State Manager**
+**Store**
 
-State Manager holds the state of the component, the state is immutable and only be modified from calling `Actions`.
-
-State Manager provides provides a stream of that can be listened to get notified of any state mutitaion.
-
-Every State Manger has it's own dispatcher which is used to emit actions that are responded with updated state.
+- Contains the application state
+- It has computed values as getters and helper functions
+- Store takse a Mutation Type which act as an input for the reducer
+- Events are emitted as Streams
+- State can't be changed directly from outside
 
 ```dart
-//Accepted actions by this state
-enum CounterActions {
+//Accepted mutation by this store
+enum CounterMutation {
   increment,
   decrement,
   error,
 }
 
-class CounterState extends StateManager<int, CounterActions> {
+class CounterState extends StateManager<int, CounterMutation> {
     //initial state as 0
   CounterState() : super(0);
 }
@@ -36,15 +36,17 @@ class CounterState extends StateManager<int, CounterActions> {
 
 **Reducer**
 
-Reducer is a part of `StateManger` it contains the logic of state mutations depending upon the action. Reducer call the `updateState()` with new data and the all the listeners are notified about the new state.
+- Pure function simillar to Redux
+- Receive Mutation as input and update the state as output
+- Same mutations will always generate same results
 
 ```dart
-class CounterState extends StateManager<int, CounterActions> {
+class CounterState extends StateManager<int, CounterMutation> {
   CounterState() : super(0);
 
   @override
-  Future<void> reducer(action, props) async {
-    switch (action) {
+  void reducer(mutation){
+    switch (mutation) {
       case CounterActions.increment:
         updateState(cData + 1);
         break;
@@ -63,53 +65,40 @@ class CounterState extends StateManager<int, CounterActions> {
 
 **Action**
 
-Action can are specific instances that are emitted via the `.dispatch()` provided by the state manager.
-
-Actions are also executed asychronously and sequentialy, Action get automatically queued until the previous one is running. This prevents your State from blocking the UI thread and also executing the actions in the right order.
-
-```dart
-final _counter = CounterState();
-
-_counter.dispatch(CounterActions.increment);
-_counter.dispatch(CounterActions.increment);
-_counter.dispatch(CounterActions.increment);
-```
-
-**Middleware**
-
-In Nano we have separate the `StateManger` from business logic that's not related to it's state mutation. API requests, Database queries should not be the part of the `StateManger` hence we have middleware.
-
-Every time an Action is emitted, the `dispatch` checks if there are middlewares. If the middlewares exist, they will be executed first before the Action reaches the reucer.
-
-Every middleware gets access a copy of current `state`, `action` and `props`.
-
-`Props` data that's passed between middleware from top to bottom.
+- Actions cause change in the state
+- Actions contains set of mutations, which are called once the action has been completed.
+- Actions has full aschronous support
+- All the API calls are performed in the actions body
 
 ```dart
-[
-    GetDataMiddleware()
-    CacheMiddleware()
-]
-```
-In the above case, the `GetDataMiddleware()` will obtain the data from an api request and return the value. The returned value will be passed as `props` to the next middleware. `CacheMiddlware()` then get the data and cache it.
+//without any body
+final incrementRef = ActionRef<CounterStore, Null>(
+  mutations: (_, payload) => [Mutation(payload, IncrementMutation())],
+);
 
-Defining a middleware
-```dart
-class LoggerMiddleWare extends Middleware {
-  @override
-  Future<Prop> run(state, action, props) async {
-    print("LOGGER REPORT:");
-    print("Action-> $action");
-    print("State-> $state");
-    print("Props-> $props");
-    print("==END==");
-    return Prop.success(props, allowNull: true);
-  }
-}
+//with body
+final setRef = ActionRef<CounterParam, void>(
+  body: (payload) async {
+    await Future.delayed(Duration(milliseconds: payload.seconds));
+  },
+  mutations: (result, payload) =>
+      [Mutation(payload.store, CountMutation(payload.count))],
+);
 ```
 
-`pre` is just a short-name for middlewares.
+**Dispatcher**
+
+ - Dispatcher is a singleton where all the actions go through
+ - Dispatcher doesn't registers store refernces
+ - The actions provided contains mutation with reference to the store and mutation type
+- Dispatcher manages order of Actions execution
+
 ```dart
-_counter.dispatch(CounterActions.increment,pre: [LoggerMiddleWare()]);
+    // There are multiple ways to dipatch actions depending upon the
+    // situation but this is what will be used most of times
+    final counter = CounterStore();
+    //sync
+    await setRef(CounterParam(counter, 5, 200)).run();
+    //async
+    setRef(CounterParam(counter, 5, 200)).run();
 ```
-The above action will first go to the `LoggerMiddleWare` and print the log then since there are no middleware it will goto the `reducer` which will identify the action and mutate the accordingly
