@@ -1,0 +1,674 @@
+
+
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      <link rel="shortcut icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.1.2, mkdocs-material-5.4.0">
+    
+    
+      
+        <title>Quickstart - Nano Docs</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.fe0cca5b.min.css">
+      
+        <link rel="stylesheet" href="../assets/stylesheets/palette.a46bcfb3.min.css">
+      
+      
+        
+        
+        <meta name="theme-color" content="#7e57c2">
+      
+    
+    
+    
+      
+        <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,400i,700%7CRoboto+Mono&display=fallback">
+        <style>body,input{font-family:"Roboto",-apple-system,BlinkMacSystemFont,Helvetica,Arial,sans-serif}code,kbd,pre{font-family:"Roboto Mono",SFMono-Regular,Consolas,Menlo,monospace}</style>
+      
+    
+    
+    
+    
+      
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="" data-md-color-primary="deep-purple" data-md-color-accent="purple">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#quickstart" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <header class="md-header" data-md-component="header">
+  <nav class="md-header-nav md-grid" aria-label="Header">
+    <a href=".." title="Nano Docs" class="md-header-nav__button md-logo" aria-label="Nano Docs">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    <label class="md-header-nav__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2z"/></svg>
+    </label>
+    <div class="md-header-nav__title" data-md-component="header-title">
+      
+        <div class="md-header-nav__ellipsis">
+          <span class="md-header-nav__topic md-ellipsis">
+            Nano Docs
+          </span>
+          <span class="md-header-nav__topic md-ellipsis">
+            
+              Quickstart
+            
+          </span>
+        </div>
+      
+    </div>
+    
+      <label class="md-header-nav__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+      </label>
+      
+<div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" data-md-state="active">
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0116 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 019.5 16 6.5 6.5 0 013 9.5 6.5 6.5 0 019.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </label>
+      <button type="reset" class="md-search__icon md-icon" aria-label="Clear" data-md-component="search-reset" tabindex="-1">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"/></svg>
+      </button>
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+  </nav>
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+        
+      
+      
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              <div class="md-sidebar md-sidebar--primary" data-md-component="navigation">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    <nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="Nano Docs" class="md-nav__button md-logo" aria-label="Nano Docs">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 003-3 3 3 0 00-3-3 3 3 0 00-3 3 3 3 0 003 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54z"/></svg>
+
+    </a>
+    Nano Docs
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+
+  <li class="md-nav__item">
+    <a href=".." title="Introduction" class="md-nav__link">
+      Introduction
+    </a>
+  </li>
+
+    
+      
+      
+      
+
+  
+
+
+  <li class="md-nav__item md-nav__item--active">
+    
+    <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+    
+      
+    
+    
+      <label class="md-nav__link md-nav__link--active" for="__toc">
+        Quickstart
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 9h14V7H3v2m0 4h14v-2H3v2m0 4h14v-2H3v2m16 0h2v-2h-2v2m0-10v2h2V7h-2m0 6h2v-2h-2v2z"/></svg>
+        </span>
+      </label>
+    
+    <a href="./" title="Quickstart" class="md-nav__link md-nav__link--active">
+      Quickstart
+    </a>
+    
+      
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-store" class="md-nav__link">
+    Creating a store
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a store">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define-mutations" class="md-nav__link">
+    Define Mutations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-reducer" class="md-nav__link">
+    Defining Reducer
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-actions" class="md-nav__link">
+    Defining Actions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-our-widget" class="md-nav__link">
+    Creating our widget
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-views" class="md-nav__link">
+    Creating views
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+    
+  </li>
+
+    
+      
+      
+      
+
+
+  <li class="md-nav__item md-nav__item--nested">
+    
+      <input class="md-nav__toggle md-toggle" data-md-toggle="nav-3" type="checkbox" id="nav-3">
+    
+    <label class="md-nav__link" for="nav-3">
+      Concepts
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M8.59 16.58L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.42z"/></svg>
+      </span>
+    </label>
+    <nav class="md-nav" aria-label="Concepts" data-md-level="1">
+      <label class="md-nav__title" for="nav-3">
+        <span class="md-nav__icon md-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+        </span>
+        Concepts
+      </label>
+      <ul class="md-nav__list" data-md-scrollfix>
+        
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Concepts/actions/" title="Actions" class="md-nav__link">
+      Actions
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Concepts/dispatcher/" title="Dispatcher" class="md-nav__link">
+      Dispatcher
+    </a>
+  </li>
+
+        
+          
+          
+          
+
+
+  <li class="md-nav__item">
+    <a href="../Concepts/store/" title="Store" class="md-nav__link">
+      Store
+    </a>
+  </li>
+
+        
+      </ul>
+    </nav>
+  </li>
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+      </span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#creating-a-store" class="md-nav__link">
+    Creating a store
+  </a>
+  
+    <nav class="md-nav" aria-label="Creating a store">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#define-mutations" class="md-nav__link">
+    Define Mutations
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#defining-reducer" class="md-nav__link">
+    Defining Reducer
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#defining-actions" class="md-nav__link">
+    Defining Actions
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-our-widget" class="md-nav__link">
+    Creating our widget
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#creating-views" class="md-nav__link">
+    Creating views
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          <div class="md-content">
+            <article class="md-content__inner md-typeset">
+              
+                
+                
+                  
+                
+                
+                <h1 id="quickstart">Quickstart<a class="headerlink" href="#quickstart" title="Permanent link">&para;</a></h1>
+<p>Here we will try to create a simple Counter app. I will be writing more tutorial about some large which will help you understand the goal of this library a lot better.</p>
+<h2 id="creating-a-store">Creating a store<a class="headerlink" href="#creating-a-store" title="Permanent link">&para;</a></h2>
+<p>We need to create a <code>Store</code> to keep our counts track and to update the listeners automatically on every change.</p>
+<p>To create a store we need to extend our class with <code>Store</code> provided from the <code>nano</code> package</p>
+<div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">CounterStore</span> <span class="kd">extends</span> <span class="n">Store</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">CounterMutations</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="n">CounterStore</span><span class="p">()</span> <span class="o">:</span> <span class="k">super</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<div class="admonition question">
+<p class="admonition-title">What is int and CounterMutations?</p>
+<p>The first type of the <code>Store</code> is the type of our state that we are going to emit. Here we are going to emit integers so it's <code>int</code> incase of a string it will be <code>String</code> this will prevent you from emiting anything other than the state defined</p>
+<p>The second type of the <code>Store</code> is the type of mutations. Every store responds to specific mutations, if correct mutation is received it will be send to the reducer to modify the state. We are going to define <code>CounterMutations</code> in next step.</p>
+</div>
+<p>We have now defined our store and the argument passed to <code>super()</code> is the inital state. If we don't pass any argument the inital state will not be set and all the listeners will receive a waiting state which basically means that the Store hasn't emitted any events yet.</p>
+<h3 id="define-mutations">Define Mutations<a class="headerlink" href="#define-mutations" title="Permanent link">&para;</a></h3>
+<p>Mutations are specific event which our store recognizes and responds to it.</p>
+<p>Here I'm defining class based mutations, it isn't necessary to use class based mutations simple can enums can also be use but when we want some inputs with our mutations it's better to use class based mutations as you can take the benefit of linting with static typing.
+<div class="highlight"><pre><span></span><code><span class="kd">abstract</span> <span class="kd">class</span> <span class="nc">CounterMutations</span> <span class="p">{}</span>
+
+<span class="kd">class</span> <span class="nc">IncrementMutation</span> <span class="kd">extends</span> <span class="n">CounterMutations</span> <span class="p">{}</span>
+
+<span class="kd">class</span> <span class="nc">DecrementMutation</span> <span class="kd">extends</span> <span class="n">CounterMutations</span> <span class="p">{}</span>
+
+<span class="kd">class</span> <span class="nc">ErrorMutation</span> <span class="kd">extends</span> <span class="n">CounterMutations</span> <span class="p">{}</span>
+
+<span class="kd">class</span> <span class="nc">CountMutation</span> <span class="kd">extends</span> <span class="n">CounterMutations</span> <span class="p">{</span>
+  <span class="kd">final</span> <span class="kt">int</span> <span class="n">count</span><span class="p">;</span>
+  <span class="n">CountMutation</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="n">count</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></p>
+<p>Now I can't send any mutations other than <code>IncrementMutation</code>, <code>DecrementMutation</code>, <code>ErrorMutation</code> and <code>CountMutation</code>.</p>
+<h3 id="defining-reducer">Defining Reducer<a class="headerlink" href="#defining-reducer" title="Permanent link">&para;</a></h3>
+<p>In nano every store has it's own reducer. Reducer sole job is to respond to the mutations received.</p>
+<p>Now we will override the reducer from <code>Store</code> in our <code>CounterStore</code></p>
+<div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">CounterStore</span> <span class="kd">extends</span> <span class="n">Store</span><span class="o">&lt;</span><span class="kt">int</span><span class="p">,</span> <span class="n">CounterMutations</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="n">CounterStore</span><span class="p">()</span> <span class="o">:</span> <span class="k">super</span><span class="p">(</span><span class="m">0</span><span class="p">);</span>
+
+  <span class="nd">@override</span>
+  <span class="kt">void</span> <span class="n">reducer</span><span class="p">(</span><span class="n">mutation</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">mutation</span> <span class="k">is</span> <span class="n">IncrementMutation</span><span class="p">)</span> <span class="n">updateState</span><span class="p">(</span><span class="n">cData</span> <span class="o">+</span> <span class="m">1</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">mutation</span> <span class="k">is</span> <span class="n">DecrementMutation</span><span class="p">)</span> <span class="n">updateState</span><span class="p">(</span><span class="n">cData</span> <span class="o">-</span> <span class="m">1</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">mutation</span> <span class="k">is</span> <span class="n">ErrorMutation</span><span class="p">)</span> <span class="n">updateStateWithError</span><span class="p">(</span><span class="s2">&quot;Invalid mutation&quot;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">mutation</span> <span class="k">is</span> <span class="n">CountMutation</span><span class="p">)</span> <span class="n">updateState</span><span class="p">(</span><span class="n">mutation</span><span class="p">.</span><span class="n">count</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The <code>Store</code> provides you two functions <code>updateState()</code> and <code>updateStateWithError()</code> which update the state and all the listners receive the latest copy of the state.</p>
+<p>When <code>updateState</code> is called the listeners receive a data event and the <code>onData</code> callback is called.</p>
+<p>When <code>updateStateWithError</code> is called the listeners receive an error event and the <code>onErro</code> callback is called.</p>
+<div class="admonition warning">
+<p class="admonition-title">Please call updateState in reducer() only</p>
+<p>Don't create any other function or directly try to mutate the state. The way abstraction works in Dart the two functions for updating state <code>updateState</code> and <code>updateStateWithError</code> couldn't be hidden outside the class defination but please only call it in your reducer.</p>
+</div>
+<h2 id="defining-actions">Defining Actions<a class="headerlink" href="#defining-actions" title="Permanent link">&para;</a></h2>
+<p>Mutations can't be send directly to the store they are sent through Actions but since Actions also plays a major role like making async calls and once Action can cause mutation to multiple stores, when we say Actions causes change we don't strictly imply that. Actions carry the mutations and actions are added to the Dispatcher. The dispatcher waits for the Actions to complete and then it sends to the mutation to the respective stores.</p>
+<p>We will create action references and whenever we need to create an action we will call the refernce. References can be global as they are immutable but it's better you create them as static members inside a class</p>
+<p>First we will create a file <code>actions.dart</code> in our lib folder.</p>
+<p>Then paste the following code in the file</p>
+<div class="highlight"><pre><span></span><code><span class="c1">//Actions</span>
+<span class="kd">final</span> <span class="n">incrementRef</span> <span class="o">=</span> <span class="n">ActionRef</span><span class="o">&lt;</span><span class="n">CounterStore</span><span class="p">,</span> <span class="n">Null</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nl">mutations:</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="n">Mutation</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">IncrementMutation</span><span class="p">())],</span>
+<span class="p">);</span>
+
+<span class="kd">final</span> <span class="n">decrementRef</span> <span class="o">=</span> <span class="n">ActionRef</span><span class="o">&lt;</span><span class="n">CounterStore</span><span class="p">,</span> <span class="n">Null</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nl">mutations:</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="n">Mutation</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">DecrementMutation</span><span class="p">())],</span>
+<span class="p">);</span>
+<span class="kd">final</span> <span class="n">errortRef</span> <span class="o">=</span> <span class="n">ActionRef</span><span class="o">&lt;</span><span class="n">CounterStore</span><span class="p">,</span> <span class="n">Null</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nl">mutations:</span> <span class="p">(</span><span class="n">_</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">[</span><span class="n">Mutation</span><span class="p">(</span><span class="n">payload</span><span class="p">,</span> <span class="n">ErrorMutation</span><span class="p">())],</span>
+<span class="p">);</span>
+
+<span class="kd">final</span> <span class="n">setRef</span> <span class="o">=</span> <span class="n">ActionRef</span><span class="o">&lt;</span><span class="n">CounterParam</span><span class="p">,</span> <span class="kt">void</span><span class="o">&gt;</span><span class="p">(</span>
+  <span class="nl">body:</span> <span class="p">(</span><span class="n">payload</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+    <span class="kd">await</span> <span class="n">Future</span><span class="p">.</span><span class="n">delayed</span><span class="p">(</span><span class="n">Duration</span><span class="p">(</span><span class="nl">milliseconds:</span> <span class="n">payload</span><span class="p">.</span><span class="n">seconds</span><span class="p">));</span>
+  <span class="p">},</span>
+  <span class="nl">mutations:</span> <span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">payload</span><span class="p">)</span> <span class="o">=&gt;</span>
+      <span class="p">[</span><span class="n">Mutation</span><span class="p">(</span><span class="n">payload</span><span class="p">.</span><span class="n">store</span><span class="p">,</span> <span class="n">CountMutation</span><span class="p">(</span><span class="n">payload</span><span class="p">.</span><span class="n">count</span><span class="p">))],</span>
+<span class="p">);</span>
+</code></pre></div>
+
+<p>ActionRef has few important parameters</p>
+<ul>
+<li>
+<p><strong>body</strong></p>
+<ul>
+<li>Optional parameter</li>
+<li>Perform all async operations here like API calls fetching from data base</li>
+<li>returns a <code>List&lt;Mutation(store,type)&gt;</code> </li>
+</ul>
+</li>
+<li>
+<p><strong>mutations</strong></p>
+<ul>
+<li>Required paramter</li>
+<li>Takes 2 paramter <code>result</code> the returned value of <code>body()</code> and <code>payload</code> for dependcy injection</li>
+</ul>
+</li>
+</ul>
+<h2 id="creating-our-widget">Creating our widget<a class="headerlink" href="#creating-our-widget" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">CounterApp</span> <span class="kd">extends</span> <span class="n">StatefulWidget</span> <span class="p">{</span>
+  <span class="n">CounterApp</span><span class="p">({</span><span class="n">Key</span> <span class="n">key</span><span class="p">})</span> <span class="o">:</span> <span class="k">super</span><span class="p">(</span><span class="nl">key:</span> <span class="n">key</span><span class="p">);</span>
+
+  <span class="nd">@override</span>
+  <span class="n">_CounterAppState</span> <span class="n">createState</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">_CounterAppState</span><span class="p">();</span>
+<span class="p">}</span>
+
+<span class="kd">class</span> <span class="nc">_CounterAppState</span> <span class="kd">extends</span> <span class="n">State</span><span class="o">&lt;</span><span class="n">CounterApp</span><span class="o">&gt;</span> <span class="p">{</span>
+  <span class="kd">final</span> <span class="n">_counter</span> <span class="o">=</span> <span class="n">CounterState</span><span class="p">();</span>
+
+  <span class="kt">void</span> <span class="n">handleIncrement</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">incrementRef</span><span class="p">(</span><span class="n">_counter</span><span class="p">).</span><span class="n">run</span><span class="p">();</span>
+  <span class="kt">void</span> <span class="n">handleDecrement</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">decrementRef</span><span class="p">(</span><span class="n">_counter</span><span class="p">).</span><span class="n">run</span><span class="p">();</span>
+  <span class="kt">void</span> <span class="n">handleError</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">errorRef</span><span class="p">(</span><span class="n">_counter</span><span class="p">).</span><span class="n">run</span><span class="p">();</span>
+  <span class="kt">void</span> <span class="n">handleCount</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">setRef</span><span class="p">(</span><span class="n">CounterParam</span><span class="p">(</span><span class="n">_counter</span><span class="p">,</span> <span class="m">5</span><span class="p">)).</span><span class="n">run</span><span class="p">();</span>
+
+  <span class="nd">@override</span>
+  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span>  <span class="n">Scaffold</span><span class="p">(</span>
+        <span class="nl">appBar:</span> <span class="n">AppBar</span><span class="p">(</span><span class="nl">title:</span> <span class="n">Text</span><span class="p">(</span><span class="s2">&quot;Counter&quot;</span><span class="p">)),</span>
+        <span class="nl">body:</span> <span class="n">StateBuilder</span><span class="o">&lt;</span><span class="kt">int</span><span class="o">&gt;</span><span class="p">(</span>
+          <span class="nl">initialState:</span> <span class="n">_counter</span><span class="p">.</span><span class="n">state</span><span class="p">,</span>
+          <span class="nl">stream:</span> <span class="n">_counter</span><span class="p">.</span><span class="n">stream</span><span class="p">,</span>
+          <span class="nl">rebuildOnly:</span> <span class="p">(</span><span class="n">state</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">((</span><span class="n">state</span><span class="p">.</span><span class="n">data</span> <span class="o">??</span> <span class="m">1</span><span class="p">)</span> <span class="o">%</span> <span class="m">2</span> <span class="o">==</span> <span class="m">0</span><span class="p">),</span>
+          <span class="nl">builder:</span> <span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">state</span><span class="p">,</span> <span class="n">init</span><span class="p">)</span> <span class="o">=&gt;</span> 
+          <span class="n">Center</span><span class="p">(</span><span class="nl">child:</span> <span class="n">Text</span><span class="p">(</span><span class="n">state</span><span class="p">.</span><span class="n">toString</span><span class="p">())),</span>
+        <span class="p">),</span>
+        <span class="nl">floatingActionButton:</span> <span class="n">Column</span><span class="p">(</span>
+          <span class="nl">mainAxisAlignment:</span> <span class="n">MainAxisAlignment</span><span class="p">.</span><span class="n">end</span><span class="p">,</span>
+          <span class="nl">children:</span> <span class="o">&lt;</span><span class="n">Widget</span><span class="o">&gt;</span><span class="p">[</span>
+            <span class="n">FloatingActionButton</span><span class="p">(</span>
+              <span class="nl">mini:</span> <span class="kc">true</span><span class="p">,</span>
+              <span class="nl">heroTag:</span> <span class="kc">null</span><span class="p">,</span>
+              <span class="nl">onPressed:</span> <span class="n">handleIncrement</span><span class="p">,</span>
+              <span class="nl">child:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">add</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">FloatingActionButton</span><span class="p">(</span>
+              <span class="nl">mini:</span> <span class="kc">true</span><span class="p">,</span>
+              <span class="nl">heroTag:</span> <span class="kc">null</span><span class="p">,</span>
+              <span class="nl">onPressed:</span> <span class="n">handleDecrement</span><span class="p">,</span>
+              <span class="nl">child:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">remove</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">FloatingActionButton</span><span class="p">(</span>
+              <span class="nl">mini:</span> <span class="kc">true</span><span class="p">,</span>
+              <span class="nl">heroTag:</span> <span class="kc">null</span><span class="p">,</span>
+              <span class="nl">onPressed:</span> <span class="n">handleError</span><span class="p">,</span>
+              <span class="nl">child:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">close</span><span class="p">),</span>
+            <span class="p">),</span>
+            <span class="n">FloatingActionButton</span><span class="p">(</span>
+              <span class="nl">mini:</span> <span class="kc">true</span><span class="p">,</span>
+              <span class="nl">heroTag:</span> <span class="kc">null</span><span class="p">,</span>
+              <span class="nl">onPressed:</span> <span class="n">handleCount</span><span class="p">,</span>
+              <span class="nl">child:</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">plus_one</span><span class="p">),</span>
+            <span class="p">),</span>
+          <span class="p">],</span>
+        <span class="p">),</span>
+    <span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The <code>StateBuilder</code> widget takes the <code>Store</code> and listens for event. It might look very raw as because the depency inject is very loosely coupled so anyone can use their favourite depency injection library.</p>
+<h2 id="creating-views">Creating views<a class="headerlink" href="#creating-views" title="Permanent link">&para;</a></h2>
+<p>Views are the integrating point this is where we build our widget tree and integrate everything.</p>
+<p>Create a file name <code>views.dart</code> and paste the following code.</p>
+<div class="highlight"><pre><span></span><code><span class="kd">class</span> <span class="nc">App</span> <span class="kd">extends</span> <span class="n">StatelessWidget</span> <span class="p">{</span>
+  <span class="kd">const</span> <span class="n">App</span><span class="p">({</span><span class="n">Key</span> <span class="n">key</span><span class="p">})</span> <span class="o">:</span> <span class="k">super</span><span class="p">(</span><span class="nl">key:</span> <span class="n">key</span><span class="p">);</span>
+
+  <span class="nd">@override</span>
+  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">MaterialApp</span><span class="p">(</span><span class="nl">home:</span> <span class="n">CounterApp</span><span class="p">());</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+                
+              
+              
+                
+
+
+              
+            </article>
+          </div>
+        </div>
+      </main>
+      
+        
+<footer class="md-footer">
+  
+    <div class="md-footer-nav">
+      <nav class="md-footer-nav__inner md-grid" aria-label="Footer">
+        
+          <a href=".." title="Introduction" class="md-footer-nav__link md-footer-nav__link--prev" rel="prev">
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12z"/></svg>
+            </div>
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Previous
+                </span>
+                Introduction
+              </div>
+            </div>
+          </a>
+        
+        
+          <a href="../Concepts/actions/" title="Actions" class="md-footer-nav__link md-footer-nav__link--next" rel="next">
+            <div class="md-footer-nav__title">
+              <div class="md-ellipsis">
+                <span class="md-footer-nav__direction">
+                  Next
+                </span>
+                Actions
+              </div>
+            </div>
+            <div class="md-footer-nav__button md-icon">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    </div>
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-footer-copyright">
+        
+        Made with
+        <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+          Material for MkDocs
+        </a>
+      </div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    
+      <script src="../assets/javascripts/vendor.d710d30a.min.js"></script>
+      <script src="../assets/javascripts/bundle.b39636ac.min.js"></script><script id="__lang" type="application/json">{"clipboard.copy": "Copy to clipboard", "clipboard.copied": "Copied to clipboard", "search.config.lang": "en", "search.config.pipeline": "trimmer, stopWordFilter", "search.config.separator": "[\\s\\-]+", "search.result.placeholder": "Type to start searching", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents"}</script>
+      
+      <script>
+        app = initialize({
+          base: "..",
+          features: [],
+          search: Object.assign({
+            worker: "../assets/javascripts/worker/search.a68abb33.min.js"
+          }, typeof search !== "undefined" && search)
+        })
+      </script>
+      
+    
+  </body>
+</html>
