@@ -11,10 +11,10 @@ class _Waiting {
 class Dispatcher {
   final _prefix = "action_id_";
   int _lastId = 0;
-  Map<ActionId, Action> _actions = {};
-  List<_Waiting> _waiting = [];
-  Map<ActionId, bool> _isCompleted = {};
-  Map<ActionId, dynamic> _proxyVerification = {};
+  final Map<ActionId, Action> _actions = {};
+  final List<_Waiting> _waiting = [];
+  final Map<ActionId, bool> _isCompleted = {};
+  final Map<ActionId, dynamic> _proxyVerification = {};
   StreamController<Map<ActionId, bool>> _controller;
   Stream<Map<ActionId, bool>> _stream;
 
