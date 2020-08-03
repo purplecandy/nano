@@ -1,3 +1,3 @@
-## [0.0.1] - Alpha
+## [0.1.0] - Inital Release
 
 Initial release of the package

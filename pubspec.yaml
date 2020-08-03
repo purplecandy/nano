@@ -1,14 +1,14 @@
 name: nano
-description: An easy to use modular state management library
-version: 0.0.1
+description: An application architecture pattern than a framework for Flutter utilizing a unidirectional data flow.
+version: 0.1.0
 homepage: https://github.com/purplecandy/nano
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
-  rxdart: "^0.24.1"
-  meta: "^1.1.8"
+  rxdart:
+  meta:
   flutter:
     sdk: flutter
 
@@ -16,8 +16,4 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
 
-# For information on the generic Dart part of this file, see the
-# following page: https://dart.dev/tools/pub/pubspec
-
-# The following section is specific to Flutter.
 flutter:
