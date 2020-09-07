@@ -134,7 +134,7 @@ abstract class Store<T, A> {
           sink.addError((error as StateSnapshot).error)));
 
   /// Last emitted cached data
-  T get cData => _controller.cachedValue.data;
+  T get cData => _controller.cachedValue?.data;
 
   // Directly listen to the store's state changes
   StreamSubscription<StateSnapshot<T>> listen(
