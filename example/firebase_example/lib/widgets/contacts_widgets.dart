@@ -65,6 +65,7 @@ class InputWidget extends StatefulWidget {
 
 class _InputWidgetState extends State<InputWidget> {
   String input = "";
+
   @override
   Widget build(BuildContext context) {
     return AlertDialog(

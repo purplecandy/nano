@@ -2,12 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nano/nano.dart';
 import '../models/models.dart';
 
-enum ContactAction {
-  add,
-  delete,
+abstract class ContactMutation {}
+
+class AddContactMutation extends ContactMutation {
+  final ContactModel model;
+  AddContactMutation(this.model);
 }
 
-class ContactStore extends Store<ContactList, ContactAction>
+class DeleteContactMutation extends ContactMutation {
+  final ContactModel model;
+  DeleteContactMutation(this.model);
+}
+
+/// ProxyStream is an older implementation
+/// The idea was lift states from another Stream and use it like they are actually apart of this store
+/// I didn't find much use case of it, so I'm thinking to remove it
+class ContactStore extends Store<ContactList, ContactMutation>
     with ProxyStream<QuerySnapshot> {
   ContactStore() : super(ContactList(status: Status.loading));
 
@@ -27,21 +37,16 @@ class ContactStore extends Store<ContactList, ContactAction>
   }
 
   @override
-  Future<void> reducer(ContactAction action) async {
-    // String name = props.data
-    // switch (action) {
-    //   case ContactAction.add:
-    //     Firestore.instance
-    //         .collection("contacts")
-    //         .document(name)
-    //         .setData({"name": name});
-
-    //     break;
-    //   case ContactAction.delete:
-    //     Firestore.instance.collection("contacts").document(name).delete();
-    //     break;
-    //   default:
-    // }
+  void reducer(ContactMutation mutation) {
+    if (mutation is AddContactMutation) {
+      cData.contacts.add(mutation.model);
+      updateState(cData);
+    }
+    if (mutation is DeleteContactMutation) {
+      cData.contacts
+          .removeWhere((element) => element.name == mutation.model.name);
+      updateState(cData);
+    }
   }
 
   @override

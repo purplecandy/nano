@@ -36,7 +36,7 @@ class Pool {
   int _generateToken() => _tokens++;
 
   /// Returns a store token without instantiating
-  StoreToken register<T>(T Function() createInstance) {
+  StoreToken<T> register<T>(T Function() createInstance) {
     final randomToken = _generateToken().toString();
     final storeToken = StoreToken<T>(randomToken);
     _uninitialized[storeToken] = createInstance;
@@ -163,20 +163,20 @@ class _StoreManagerState extends State<StoreManager> {
   @override
   void initState() {
     super.initState();
-    initialize.forEach((token) {
+    initialize?.forEach((token) {
       Pool.instance.create(token);
     });
-    recreatable.forEach((token) {
+    recreatable?.forEach((token) {
       Pool.instance.create(token, recreate: true);
     });
   }
 
   @override
   void dispose() {
-    dis.forEach((token) {
+    dis?.forEach((token) {
       Pool.instance.disposeStore(token, (store) => store.dispose());
     });
-    uninitialize.forEach((token) {
+    uninitialize?.forEach((token) {
       Pool.instance.uninitialize(token, (store) => store.dispose());
     });
     super.dispose();

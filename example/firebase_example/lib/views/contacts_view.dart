@@ -1,10 +1,12 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_example/models/contact_models.dart';
 import 'package:flutter/material.dart';
-import 'package:nano/nano.dart';
-import '../refs.dart';
+import '../actions/actions.dart';
+import 'live_search.dart';
 import '../refs.dart';
 import '../stores/auth_store.dart';
 import '../stores/stores.dart';
-import 'contacts_widgets.dart';
+import '../widgets/widgets.dart';
 
 class ContactsView extends StatefulWidget {
   ContactsView({Key key}) : super(key: key);
@@ -19,10 +21,11 @@ class _ContactsViewState extends State<ContactsView> {
   @override
   void initState() {
     super.initState();
+    contactStore.init(Firestore.instance.collection("contacts").snapshots());
   }
 
   void onCreate(String name) {
-    // contactState.dispatch(ContactAction.add, initialProps: Prop.success(name));
+    ContactActions.add(payload: ContactModel(name: name));
   }
 
   @override
@@ -31,10 +34,15 @@ class _ContactsViewState extends State<ContactsView> {
       appBar: AppBar(
         title: Text("Contacts"),
         actions: <Widget>[
-          // FlatButton(
-          //     onPressed: () =>
-          //         Dispatcher.instance.add(AuthActions.signOutAction(authState)),
-          //     child: Text("Logout"))
+          IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () {
+                Navigator.push(context,
+                    MaterialPageRoute(builder: (_) => LiveSearchView()));
+              }),
+          FlatButton(
+              onPressed: () => AuthActions.signOutAction().run(),
+              child: Text("Logout"))
         ],
       ),
       body: ContactsWidget(),
