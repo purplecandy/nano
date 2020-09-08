@@ -1,11 +1,10 @@
 import "package:nano/nano.dart";
 import 'counter_state.dart';
 
-final incrementRef = ActionRef<CounterState, String>(
-  body: (param) async => "S",
-  mutations: (result, payload) => [Mutation(payload, CounterActions.increment)],
+final incrementRef = ActionRef<CounterStore, String>(
+  mutation: (result, payload) => Mutation(payload, CounterActions.increment),
 );
 
-final decrementRef = ActionRef<CounterState, String>(
-  mutations: (result, payload) => [Mutation(payload, CounterActions.decrement)],
+final decrementRef = ActionRef<CounterStore, String>(
+  mutation: (result, payload) => Mutation(payload, CounterActions.decrement),
 );

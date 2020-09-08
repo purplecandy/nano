@@ -1,7 +1,7 @@
-import 'package:counter/actions.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:nano/nano.dart';
+import 'actions.dart';
 import 'counter_state.dart';
 
 class CounterApp extends StatefulWidget {
@@ -12,14 +12,17 @@ class CounterApp extends StatefulWidget {
 }
 
 class _CounterAppState extends State<CounterApp> {
-  final _counter = CounterState();
-
+  final _counter = CounterStore();
   void autoIncrement() {
-    // if (_counter.cData < 50)
-    //   _counter.dispatch(CounterActions.increment, onSuccess: () async {
-    //     await Future.delayed(Duration(seconds: 1));
-    //     autoIncrement();
-    //   });
+    if (_counter.cData < 50) {
+      incrementRef(
+          payload: _counter,
+          onDone: () async {
+            await Future.delayed(Duration(seconds: 1));
+            autoIncrement();
+          })
+        ..run();
+    }
   }
 
   @override
@@ -28,24 +31,6 @@ class _CounterAppState extends State<CounterApp> {
     Dispatcher.instance.onActionComplete.listen((event) {
       print(event);
     });
-    var id = Dispatcher.instance.add(incrementRef(_counter));
-
-    // print(id.token);
-    // id = Dispatcher.instance.add(decrementRef(_counter, waitFor: [id]),
-    //     onError: (e) {
-    //   print(e);
-    // }, onDone: () {
-    //   print("Oh boy");
-    //   print(_counter.state);
-    // });
-    // print(id.token);
-    // _counter.dispatch(CounterActions.increment);
-    // print(_lstate.state.data);
-    // _lstate.state.data.add(9);
-    // print(_lstate.state.data);
-    // _counter.dispatch(CounterActions.increment);
-    // _counter.dispatch(CounterActions.increment);
-    // _counter.dispatch(CounterActions.increment);
   }
 
   void handleError(Object error) => print("Error $error");
@@ -53,61 +38,53 @@ class _CounterAppState extends State<CounterApp> {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<CounterState>(
-      create: (_) => _counter,
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text("Counter State"),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.publish),
-                onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Scaffold(appBar: AppBar())));
-                })
-          ],
-        ),
-        body: StateBuilder<int>(
-          initialState: _counter.state,
-          stream: _counter.stream,
-          rebuildOnly: (state) => ((state.data ?? 1) % 2 == 0),
-          builder: (context, state, init) =>
-              Center(child: Text(state.toString())),
-          // onError: (_,   error) => Center(child: Text(error.toString())),
-          // onData: (_, data) => Center(child: Text(data.toString())),
-        ),
-        floatingActionButton: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            FloatingActionButton(
-              mini: true,
-              heroTag: null,
-              onPressed: () => incrementRef(_counter,
-                  onError: handleError, onDone: handleDone),
-              child: Icon(Icons.add),
-            ),
-            FloatingActionButton(
-              mini: true,
-              heroTag: null,
-              onPressed: () => _counter.dispatch(CounterActions.decrement),
-              child: Icon(Icons.remove),
-            ),
-            FloatingActionButton(
-              mini: true,
-              heroTag: null,
-              onPressed: () => _counter.dispatch(CounterActions.error),
-              child: Icon(Icons.close),
-            ),
-            FloatingActionButton(
-              mini: true,
-              heroTag: null,
-              onPressed: autoIncrement,
-              child: Icon(Icons.plus_one),
-            ),
-          ],
-        ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("Counter State"),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.publish),
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Scaffold(appBar: AppBar())));
+              })
+        ],
+      ),
+      body: StateBuilder<int>(
+        initialState: _counter.state,
+        stream: _counter.stream,
+        rebuildOnly: (state) => ((state.data ?? 1) % 2 == 0),
+        builder: (context, state, init) =>
+            Center(child: Text(state.toString())),
+        // onError: (_,   error) => Center(child: Text(error.toString())),
+        // onData: (_, data) => Center(child: Text(data.toString())),
+      ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          FloatingActionButton(
+            mini: true,
+            heroTag: null,
+            onPressed: () => incrementRef(
+                payload: _counter, onError: handleError, onDone: handleDone)
+              ..run(),
+            child: Icon(Icons.add),
+          ),
+          FloatingActionButton(
+            mini: true,
+            heroTag: null,
+            onPressed: () => decrementRef(payload: _counter)..run(),
+            child: Icon(Icons.remove),
+          ),
+          FloatingActionButton(
+            mini: true,
+            heroTag: null,
+            onPressed: autoIncrement,
+            child: Icon(Icons.plus_one),
+          ),
+        ],
       ),
     );
   }

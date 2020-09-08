@@ -8,8 +8,8 @@ enum CounterActions {
   error,
 }
 
-class CounterState extends Store<int, CounterActions> {
-  CounterState() : super(0);
+class CounterStore extends Store<int, CounterActions> {
+  CounterStore() : super(0);
 
   @override
   Future<void> reducer(action) async {
