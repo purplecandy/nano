@@ -52,16 +52,16 @@ main() {
       counter.stream
           .listen((event) => print("Data"), onError: (e) => print("Error"));
       addListener(counter, 3, 2);
-      await incrementRef(counter, onDone: () => count++).run();
-      errortRef(counter).run();
+      await incrementRef(payload: counter, onDone: () => count++).run();
+      errortRef(payload: counter).run();
 
       /// Error hasn't been completed so it will still receive current state which is a Data
       addListener(counter, 2, 2);
 
       await Future.delayed(Duration(milliseconds: 100));
       addListener(counter, 1, 2);
-      var action = incrementRef(counter, onDone: () => count++)..run();
-      errortRef(counter, waitFor: [action.id]).run();
+      var action = incrementRef(payload: counter, onDone: () => count++)..run();
+      errortRef(payload: counter, waitFor: [action.id]).run();
       await Future.delayed(Duration(
           milliseconds: 100)); //waiting for the above action to complete
       counter.dispose();

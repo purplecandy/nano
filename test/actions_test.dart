@@ -11,20 +11,22 @@ main() {
       final counter = CounterStore();
       expect(counter.rawStream, emitsInOrder([0, 5, 15, 10]));
       counter.stream.listen((event) => print(event));
-      await setRef(CounterParam(counter, 5, 200)).run();
-      await setRef(CounterParam(counter, 15, 50)).run();
-      await setRef(CounterParam(counter, 10, 100)).run();
+      await setRef(payload: CounterParam(counter, 5, 200)).run();
+      await setRef(payload: CounterParam(counter, 15, 50)).run();
+      await setRef(payload: CounterParam(counter, 10, 100)).run();
     });
 
     test("Asynchronous Execution", () async {
       final counter = CounterStore();
       expect(counter.rawStream, emitsInOrder([0, 5, 15, 10]));
       counter.stream.listen((event) => print(event));
-      var action = setRef(CounterParam(counter, 5, 200))..run();
-      action = setRef(CounterParam(counter, 15, 50), waitFor: [action.id])
-        ..run();
-      action = setRef(CounterParam(counter, 10, 100), waitFor: [action.id])
-        ..run();
+      var action = setRef(payload: CounterParam(counter, 5, 200))..run();
+      action =
+          setRef(payload: CounterParam(counter, 15, 50), waitFor: [action.id])
+            ..run();
+      action =
+          setRef(payload: CounterParam(counter, 10, 100), waitFor: [action.id])
+            ..run();
     });
   });
 }
