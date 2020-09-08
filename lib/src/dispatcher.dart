@@ -74,6 +74,7 @@ class Dispatcher {
       // Check if the dependecies have completed dispatching
 
       if (_checkActionsCompleted(action.waitFor)) {
+        Mutation mutation;
         //proceed with normal execution
         try {
           if (action.hasProxyMutation) {
@@ -86,10 +87,11 @@ class Dispatcher {
             await action.proxyRun();
           } else {
             // will be mutated by dispatch
-            final mutations = await _actions[id]();
-            for (var mutation in mutations) {
-              dispatch(mutation.store, mutation.type);
-            }
+            mutation = await _actions[id]();
+            // for (var mutation in mutations) {
+            //   dispatch(mutation.store, mutation.type);
+            // }
+            dispatch(mutation.store, mutation.type);
             _isCompleted[id] = true;
             _controller.add(_isCompleted);
             action.onDone?.call();
@@ -97,7 +99,9 @@ class Dispatcher {
         } catch (e, stack) {
           print(e);
           print(stack);
-          action.onError?.call(e);
+          final error = action.onError?.call(e);
+          // ignore: invalid_use_of_protected_member
+          if (error != null) mutation.store.updateStateWithError(error);
         } finally {
           _actions.remove(id);
         }

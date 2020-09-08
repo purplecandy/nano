@@ -12,7 +12,7 @@ class StoreToken<T> {
   StoreTokenStatus get status => Pool.instance.getTokenStatus(this);
 
   ///Store this token is attached to
-  T get store => getStore(this);
+  T get store => Pool.instance.obtain<T>(this);
   @override
   String toString() => "StoreToken: $value handling $T";
 }
@@ -137,8 +137,6 @@ class Pool {
       return StoreTokenStatus.unknown;
   }
 }
-
-T getStore<T>(StoreToken token) => Pool().obtain<T>(token);
 
 class StoreManager extends StatefulWidget {
   final Widget child;
