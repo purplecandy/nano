@@ -1,18 +1,26 @@
 import 'package:flutter/material.dart';
 
+enum StoreTokenStatus { initialized, disposed, uninitialized, unknown }
+
 /// Experimental Dependency Injection
 /// Please use tools that you prefer
-class StoreToken {
+class StoreToken<T> {
   final String value;
   const StoreToken(this.value);
 
+  ///Current status of the StoreToken
+  StoreTokenStatus get status => Pool.instance.getTokenStatus(this);
+
+  ///Store this token is attached to
+  T get store => getStore(this);
   @override
-  String toString() => value;
+  String toString() => "StoreToken: $value handling $T";
 }
 
 typedef StoreDisposer<T> = void Function(T store);
 
 class Pool {
+  int _tokens = 0;
   final Map<StoreToken, Function> _uninitialized = {};
   final Map<StoreToken, dynamic> _initialized = {};
   final Map<StoreToken, Null> _disposed = {};
@@ -25,10 +33,12 @@ class Pool {
 
   Pool._internal();
 
+  int _generateToken() => _tokens++;
+
   /// Returns a store token without instantiating
   StoreToken register<T>(T Function() createInstance) {
-    final randomToken = DateTime.now().millisecondsSinceEpoch.toString();
-    final storeToken = StoreToken(randomToken);
+    final randomToken = _generateToken().toString();
+    final storeToken = StoreToken<T>(randomToken);
     _uninitialized[storeToken] = createInstance;
     return storeToken;
   }
@@ -114,6 +124,17 @@ class Pool {
       _uninitialized[token] = _reusable[token];
       _reusable.remove(token);
     }
+  }
+
+  StoreTokenStatus getTokenStatus(StoreToken token) {
+    if (_uninitialized.containsKey(token))
+      return StoreTokenStatus.uninitialized;
+    else if (_initialized.containsKey(token))
+      return StoreTokenStatus.initialized;
+    else if (_disposed.containsKey(token))
+      return StoreTokenStatus.disposed;
+    else
+      return StoreTokenStatus.unknown;
   }
 }
 

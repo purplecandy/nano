@@ -9,3 +9,4 @@ export 'src/builders.dart';
 export 'src/actions.dart';
 export 'src/dispatcher.dart';
 export 'src/writable.dart';
+export 'src/dependency_injection.dart';
