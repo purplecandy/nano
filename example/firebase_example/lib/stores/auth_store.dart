@@ -10,28 +10,13 @@ class SignInMutation extends AuthMutations {
 
 class SignOutMutation extends AuthMutations {}
 
-class AuthState extends Store<FirebaseUser, AuthMutations>
-    with ProxyStream<FirebaseUser> {
+class AuthStore extends Store<FirebaseUser, AuthMutations> {
   @override
   bool get setInitialState => false;
-
-  @override
-  void mapper({FirebaseUser event, bool isError = false, Object error}) {
-    if (event != null)
-      proxyReducer(this, SignInMutation(event));
-    else
-      proxyReducer(this, SignOutMutation());
-  }
 
   @override
   void reducer(AuthMutations mutation) {
     if (mutation is SignInMutation) updateState(mutation.user);
     if (mutation is SignOutMutation) updateStateWithError("Unauthorised");
-  }
-
-  @override
-  void dispose() {
-    close();
-    super.dispose();
   }
 }

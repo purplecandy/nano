@@ -1,11 +1,7 @@
-import 'package:auth/auth.dart';
-import 'package:contacts/contacts.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'di/di.dart';
+import 'package:nano/nano.dart';
+import 'stores/auth_store.dart';
+import 'stores/stores.dart';
+import 'stores/stores.dart';
 
-final authRef = Pool().register<AuthState>(
-    () => AuthState()..init(FirebaseAuth.instance.onAuthStateChanged));
-
-final contactRef = Pool().register<ContactState>(() => ContactState()
-  ..init(Firestore.instance.collection("contacts").snapshots()));
+final authRef = Pool.instance.register<AuthStore>(() => AuthStore());
+final contactRef = Pool.instance.register<ContactStore>(() => ContactStore());

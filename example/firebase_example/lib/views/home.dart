@@ -1,26 +1,20 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_example/di/di.dart';
-import 'package:firebase_example/refs.dart';
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
-import 'package:provider/provider.dart';
 
-import 'package:firebase_example/widgets.dart';
-import 'package:auth/auth.dart';
-import 'package:contacts/contacts.dart';
-import 'package:firebase_example/utils.dart';
+import '../refs.dart';
+import '../stores/auth_store.dart';
+import '../widgets.dart';
 
-class HomePage extends StatefulWidget {
-  final AuthState authState;
-  HomePage({Key key, this.authState}) : super(key: key);
+class HomeView extends StatefulWidget {
+  HomeView({Key key}) : super(key: key);
 
   @override
-  _HomePageState createState() => _HomePageState();
+  _HomeViewState createState() => _HomeViewState();
 }
 
-class _HomePageState extends State<HomePage> {
-  AuthState get authState => widget.authState;
+class _HomeViewState extends State<HomeView> {
+  AuthStore authStore = authRef.store;
   @override
   void initState() {
     super.initState();
@@ -30,13 +24,11 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return StateBuilder<FirebaseUser>(
-      initialState: authState.state,
-      stream: authState.stream,
+      initialState: authStore.state,
+      stream: authStore.stream,
       builder: (context, state, init) {
         if (state.hasError || init == false)
-          return PleaseSignIn(
-            authState: authState,
-          );
+          return PleaseSignIn();
         else
           return LoggedIn();
         // return InitializeStore<ContactState>(
@@ -99,10 +91,10 @@ class _LoggedInState extends State<LoggedIn> {
       appBar: AppBar(
         title: Text("Contacts"),
         actions: <Widget>[
-          FlatButton(
-              onPressed: () =>
-                  Dispatcher.instance.add(AuthActions.signOutAction(authState)),
-              child: Text("Logout"))
+          // FlatButton(
+          //     onPressed: () =>
+          //         Dispatcher.instance.add(AuthActions.signOutAction(authState)),
+          //     child: Text("Logout"))
         ],
       ),
     );

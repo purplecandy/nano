@@ -1,13 +1,11 @@
 import 'package:nano/nano.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'auth_models.dart';
-import 'auth_state.dart';
-
-class SignInParams {
-  final AuthState store;
-  final Credentials creds;
-  SignInParams(this.store, this.creds);
-}
+import '../models/auth_models.dart';
+import '../refs.dart';
+import '../stores/auth_store.dart';
+import '../stores/auth_store.dart';
+import '../stores/stores.dart';
+import '../models/models.dart';
 
 class AuthActions {
   // We are not passing any mutations as AuthState is ProxyStream
@@ -21,24 +19,24 @@ class AuthActions {
   // --> AuthState.reducer is called from proxy mapper
   // --> reducer verifies if action was successfull
 
-  static final signInAction = ProxyActionRef<SignInParams, FirebaseUser>(
-    (payload) async {
+  static final signInAction = ActionRef<Credentials, FirebaseUser>(
+    body: (payload) async {
       FirebaseAuth.instance.signOut();
       AuthResult result =
           await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: payload.creds.email,
-        password: payload.creds.password,
+        email: payload.email,
+        password: payload.password,
       );
       return result.user;
     },
-    proxyStores: (payload) => [payload.store],
+    mutation: (user, _) => Mutation(authRef.store, SignInMutation(user)),
   );
 
-  static final signOutAction = ProxyActionRef<AuthState, FirebaseUser>(
-    (payload) async {
+  static final signOutAction = ActionRef<Null, FirebaseUser>(
+    body: (_) async {
       await FirebaseAuth.instance.signOut();
       return;
     },
-    proxyStores: (payload) => [payload],
+    mutation: (_, __) => Mutation(authRef.store, SignOutMutation()),
   );
 }

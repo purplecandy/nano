@@ -1,21 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
-import 'package:auth/auth.dart';
-import 'contacts_state.dart';
+import '../refs.dart';
+import '../refs.dart';
+import '../stores/auth_store.dart';
+import '../stores/stores.dart';
 import 'contacts_widgets.dart';
 
 class ContactsView extends StatefulWidget {
-  final ContactState contactState;
-  final AuthState authState;
-  ContactsView({Key key, this.contactState, this.authState}) : super(key: key);
+  ContactsView({Key key}) : super(key: key);
 
   @override
   _ContactsViewState createState() => _ContactsViewState();
 }
 
 class _ContactsViewState extends State<ContactsView> {
-  ContactState get contactState => widget.contactState;
-  AuthState get authState => widget.authState;
+  ContactStore contactStore = contactRef.store;
+  AuthStore authStore = authRef.store;
   @override
   void initState() {
     super.initState();
@@ -31,15 +31,13 @@ class _ContactsViewState extends State<ContactsView> {
       appBar: AppBar(
         title: Text("Contacts"),
         actions: <Widget>[
-          FlatButton(
-              onPressed: () =>
-                  Dispatcher.instance.add(AuthActions.signOutAction(authState)),
-              child: Text("Logout"))
+          // FlatButton(
+          //     onPressed: () =>
+          //         Dispatcher.instance.add(AuthActions.signOutAction(authState)),
+          //     child: Text("Logout"))
         ],
       ),
-      body: ContactsWidget(
-        contactState: contactState,
-      ),
+      body: ContactsWidget(),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           showDialog(

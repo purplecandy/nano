@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
-import 'package:auth/auth.dart';
+
+import 'stores/auth_store.dart';
 
 class PleaseSignIn extends StatelessWidget {
-  final AuthState authState;
-  const PleaseSignIn({Key key, this.authState}) : super(key: key);
+  const PleaseSignIn({Key key}) : super(key: key);
+
+  void handleSignIn() {}
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +17,15 @@ class PleaseSignIn extends StatelessWidget {
         children: <Widget>[
           Center(child: Text("Please Sign In")),
           FlatButton(
-            onPressed: () {
-              dAdd(AuthActions.signInAction(SignInParams(
-                  authState, Credentials("example@example.com", "example"))));
-            },
+            onPressed: handleSignIn,
             child: Text("Login"),
             color: Colors.blue,
-          )
+          ),
+          FlatButton(
+            onPressed: handleSignIn,
+            child: Text("Try Invalid Login"),
+            color: Colors.blue,
+          ),
         ],
       ),
     );

@@ -1,16 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:nano/nano.dart';
-
-import 'contacts_models.dart';
+import '../models/models.dart';
 
 enum ContactAction {
   add,
   delete,
 }
 
-class ContactState extends Store<ContactList, ContactAction>
+class ContactStore extends Store<ContactList, ContactAction>
     with ProxyStream<QuerySnapshot> {
-  ContactState() : super(ContactList(status: Status.loading));
+  ContactStore() : super(ContactList(status: Status.loading));
 
   @override
   void mapper({QuerySnapshot event, bool isError = false, Object error}) {

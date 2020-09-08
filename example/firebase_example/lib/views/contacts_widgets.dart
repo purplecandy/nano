@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 
-import 'contacts_state.dart';
-import 'contacts_models.dart';
+import '../models/models.dart';
+import '../refs.dart';
+import '../stores/stores.dart';
 
 class ContactsWidget extends StatefulWidget {
-  final ContactState contactState;
-  ContactsWidget({Key key, this.contactState}) : super(key: key);
+  ContactsWidget({Key key}) : super(key: key);
 
   @override
   _ContactsWidgetState createState() => _ContactsWidgetState();
 }
 
 class _ContactsWidgetState extends State<ContactsWidget> {
-  ContactState get contactState => widget.contactState;
+  ContactStore contactStore = contactRef.store;
   @override
   Widget build(BuildContext context) {
     return StateBuilder<ContactList>(
-      initialState: contactState.state,
-      stream: contactState.stream,
+      initialState: contactStore.state,
+      stream: contactStore.stream,
       onError: (context, error) => Center(
         child: Text(error.toString()),
       ),
