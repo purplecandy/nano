@@ -8,3 +8,4 @@ export 'src/proxy_state_manager.dart';
 export 'src/builders.dart';
 export 'src/actions.dart';
 export 'src/dispatcher.dart';
+export 'src/writable.dart';
