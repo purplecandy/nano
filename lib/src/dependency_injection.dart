@@ -17,10 +17,10 @@ class Pool {
   final Map<StoreToken, dynamic> _initialized = {};
   final Map<StoreToken, Null> _disposed = {};
   final Map<StoreToken, Function> _reusable = {};
-  static final Pool _pool = Pool._internal();
+  static final Pool instance = Pool._internal();
 
   factory Pool() {
-    return _pool;
+    return instance;
   }
 
   Pool._internal();
@@ -54,11 +54,11 @@ class Pool {
   }
 
   /// Registers a token and initializes the store
-  StoreToken store<T>(T Function() callback) {
-    final storeToken = register<T>(callback);
-    create(storeToken);
-    return storeToken;
-  }
+  // StoreToken store<T>(T Function() callback) {
+  //   final storeToken = register<T>(callback);
+  //   create(storeToken);
+  //   return storeToken;
+  // }
 
   void disposeStore<T>(StoreToken token, StoreDisposer<T> dispose) {
     if (_uninitialized.containsKey(token)) {
@@ -117,34 +117,52 @@ class Pool {
   }
 }
 
-class InitializeStore<T> extends StatefulWidget {
-  final StoreToken storeToken;
-  final StoreDisposer<T> dispose;
-  final Widget Function(T store) child;
-  InitializeStore({Key key, this.storeToken, this.dispose, this.child})
+T getStore<T>(StoreToken token) => Pool().obtain<T>(token);
+
+class StoreManager extends StatefulWidget {
+  final Widget child;
+  final List<StoreToken> initialize, recreatable, uninitialize, dispose;
+  StoreManager(
+      {Key key,
+      @required this.child,
+      this.initialize,
+      this.recreatable,
+      this.uninitialize,
+      this.dispose})
       : super(key: key);
 
   @override
-  _InitializeStoreState<T> createState() => _InitializeStoreState<T>();
+  _StoreManagerState createState() => _StoreManagerState();
 }
 
-class _InitializeStoreState<T> extends State<InitializeStore<T>> {
-  T store;
+class _StoreManagerState extends State<StoreManager> {
+  List<StoreToken> get initialize => widget.initialize;
+  List<StoreToken> get uninitialize => widget.uninitialize;
+  List<StoreToken> get dis => widget.dispose;
+  List<StoreToken> get recreatable => widget.recreatable;
+
   @override
   void initState() {
     super.initState();
-    Pool().create(widget.storeToken);
-    store = Pool().obtain<T>(widget.storeToken);
+    initialize.forEach((token) {
+      Pool.instance.create(token);
+    });
+    recreatable.forEach((token) {
+      Pool.instance.create(token, recreate: true);
+    });
   }
 
   @override
   void dispose() {
-    Pool().disposeStore<T>(widget.storeToken, widget.dispose);
+    dis.forEach((token) {
+      Pool.instance.disposeStore(token, (store) => store.dispose());
+    });
+    uninitialize.forEach((token) {
+      Pool.instance.uninitialize(token, (store) => store.dispose());
+    });
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) {
-    return widget.child(store);
-  }
+  Widget build(BuildContext context) => widget.child;
 }
