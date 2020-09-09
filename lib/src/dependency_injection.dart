@@ -96,22 +96,20 @@ class Pool {
     if (_initialized.containsKey(token))
       return _initialized[token];
     else if (_uninitialized.containsKey(token))
-      throw Exception("Store $token hasb't been initialized");
+      throw Exception("$token hasn't been initialized");
     else
-      throw Exception(
-          "Store $token has already been disposed or it doesn't exist");
+      throw Exception("$token has already been disposed or it doesn't exist");
   }
 
   void uninitialize<T>(StoreToken token, StoreDisposer<T> dispose) {
     if (_uninitialized.containsKey(token))
-      throw Exception("Store $T $token hasn't been initialized");
+      throw Exception("$token hasn't been initialized");
     else if (_disposed.containsKey(token)) {
-      throw Exception(
-          "Store $token has already been dispoed or it doesn't exist");
+      throw Exception("$token has already been dispoed or it doesn't exist");
     } else {
       if (!_reusable.containsKey(token))
         throw Exception(
-            "Store isn't re-createable. Only stores makred true as recreate can be unninitialize");
+            "$token isn't re-createable. Only stores makred true as recreate can be unninitialize");
 
       final store = _initialized[token];
       try {
@@ -141,9 +139,12 @@ class Pool {
 class StoreManager extends StatefulWidget {
   final Widget child;
   final List<StoreToken> initialize, recreatable, uninitialize, dispose;
+  final void Function() onInit, onDispose;
   StoreManager(
       {Key key,
       @required this.child,
+      this.onInit,
+      this.onDispose,
       this.initialize,
       this.recreatable,
       this.uninitialize,
@@ -163,6 +164,7 @@ class _StoreManagerState extends State<StoreManager> {
   @override
   void initState() {
     super.initState();
+    widget.onInit?.call();
     initialize?.forEach((token) {
       Pool.instance.create(token);
     });
@@ -173,6 +175,7 @@ class _StoreManagerState extends State<StoreManager> {
 
   @override
   void dispose() {
+    widget.onDispose?.call();
     dis?.forEach((token) {
       Pool.instance.disposeStore(token, (store) => store.dispose());
     });

@@ -224,11 +224,20 @@ abstract class Store<T, A> {
     _watchers[mutation].removeWhere((element) => element == worker);
     return true;
   }
+
+  void _emitError(Object error) => updateStateWithError(error);
 }
 
 dispatch(dynamic store, dynamic type) {
   if (store is Store)
     store.dispatch(type);
+  else
+    throw Exception("Invalid store");
+}
+
+emitError(Store store, Object error) {
+  if (store is Store)
+    store._emitError(error);
   else
     throw Exception("Invalid store");
 }

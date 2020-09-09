@@ -11,7 +11,7 @@ class Mutation {
   Mutation(this.store, this.type);
 }
 
-typedef Mutation ActionMutation<K, T>(K response, T payload);
+typedef dynamic ActionMutation<K, T>(K response, T payload);
 
 typedef List<Store> ProxyStores<T>(T payload);
 
@@ -33,11 +33,13 @@ class Action<T, K> implements Function {
   final ProxyStores<T> proxyStores;
   final Object Function(Object error) onError;
   final void Function() onDone;
+  final Store store;
   Action({
     @required this.id,
     @required this.body,
     @required this.payload,
     @required this.mutation,
+    @required this.store,
     this.waitFor,
     this.proxyStores,
     this.hasProxyMutation,
@@ -45,7 +47,7 @@ class Action<T, K> implements Function {
     this.onDone,
   });
 
-  Future<Mutation> call() async {
+  Future call() async {
     assert(mutation != null);
     // Result of the computation
     var result;
@@ -79,9 +81,11 @@ class Action<T, K> implements Function {
 class ActionRef<T, K> implements Function {
   final ActionBody<T, K> body;
   final ActionMutation<K, T> mutation;
+  final Store Function(T payload) store;
   final bool hasProxyMutation;
   ActionRef({
     @required this.mutation,
+    @required this.store,
     this.body,
     @deprecated this.hasProxyMutation = false,
   });
@@ -96,6 +100,7 @@ class ActionRef<T, K> implements Function {
     return Action<T, K>(
       id: Dispatcher.instance.getId(),
       body: body,
+      store: store(payload),
       mutation: mutation,
       payload: payload,
       waitFor: waitFor,

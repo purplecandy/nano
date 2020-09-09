@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:nano/nano.dart';
+import 'package:nano/src/state_manager.dart';
 import 'package:nano/src/actions.dart';
 
 class _Waiting {
@@ -70,11 +70,12 @@ class Dispatcher {
   Future<void> _execute(ActionId id) async {
     if (_actions.containsKey(id)) {
       final action = _actions[id];
+      final currentStore = action.store;
+
       // If the action has dependency on other action.
       // Check if the dependecies have completed dispatching
 
       if (_checkActionsCompleted(action.waitFor)) {
-        Mutation mutation;
         //proceed with normal execution
         try {
           if (action.hasProxyMutation) {
@@ -87,11 +88,8 @@ class Dispatcher {
             await action.proxyRun();
           } else {
             // will be mutated by dispatch
-            mutation = await _actions[id]();
-            // for (var mutation in mutations) {
-            //   dispatch(mutation.store, mutation.type);
-            // }
-            dispatch(mutation.store, mutation.type);
+            final mutation = await action();
+            dispatch(currentStore, mutation);
             _isCompleted[id] = true;
             _controller.add(_isCompleted);
             action.onDone?.call();
@@ -100,8 +98,7 @@ class Dispatcher {
           print(e);
           print(stack);
           final error = action.onError?.call(e);
-          // ignore: invalid_use_of_protected_member
-          if (error != null) mutation.store.updateStateWithError(error);
+          if (error != null) emitError(currentStore, error);
         } finally {
           _actions.remove(id);
         }
