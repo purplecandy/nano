@@ -19,21 +19,7 @@ class _HomeViewState extends State<HomeView> {
       appBar: AppBar(
         title: Text("Demo App"),
       ),
-      body: StateBuilder<AuthModel>(
-        initialState: authStore.state,
-        stream: authStore.stream,
-        onData: (context, data) {
-          switch (data.state) {
-            case AuthState.unauthorized:
-              return AuthentiateView();
-              break;
-            default:
-              return Center(
-                child: Text("Authenticated"),
-              );
-          }
-        },
-      ),
+      body: Text("Hello World"),
     );
   }
 }
