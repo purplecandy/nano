@@ -1,1 +1,3 @@
 class InvalidCredentials {}
+
+class InvalidRequest {}

@@ -22,7 +22,7 @@ class _AppState extends State<App> {
     DatabaseActions.create().run();
     dbRef.store.addWorker(Worker<Database>((db) => db.initialized, () {
       print("Database Intnitialized");
-      navigator.currentState.pushNamed('/auth');
+      // navigator.currentState.pushNamed('/auth');
     }, limit: 1));
   }
 
@@ -33,7 +33,8 @@ class _AppState extends State<App> {
       title: 'Demo App',
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeView(),
+        '/': (context) =>
+            StoreManager(initialize: [postsRef], child: HomeView()),
         '/auth': (context) => AuthentiateView(),
       },
     );
