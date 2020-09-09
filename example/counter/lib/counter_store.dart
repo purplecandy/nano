@@ -28,3 +28,5 @@ class CounterStore extends Store<int, CounterActions> {
     }
   }
 }
+
+final counterRef = Pool.instance.register(() => CounterStore());
