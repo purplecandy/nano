@@ -15,16 +15,24 @@ part 'state_utils.dart';
 /// Author: Nadeem Siddique
 ///
 
-typedef Dispatch<A> = void Function(
-  A action, {
-  Prop initialProps,
-  void Function() onDone,
-  void Function() onSuccess,
-  void Function() onStop,
-  void Function(Object error, StackTrace stack) onError,
-});
+class Worker<T> {
+  final bool Function(T data) condition;
+  final void Function() callback;
+  final int limit;
+  int called = 0;
+  Worker(this.condition, this.callback, {this.limit})
+      : assert(callback != null),
+        assert(condition != null);
 
-typedef ActionWorker<A> = Function(Dispatch<A> put);
+  bool get _completed => limit == null ? false : limit == called;
+
+  void execute(T data) {
+    if (condition(data)) {
+      callback();
+      called++;
+    }
+  }
+}
 
 class LastAction {
   final ActionId id;
@@ -90,7 +98,7 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
 
 abstract class Store<T, A> {
   final _defaultMiddlewares = List<Middleware>();
-  final _watchers = <A, List<ActionWorker<A>>>{};
+  final _workers = List<Worker>();
   final _queue = _ActionQueue();
 
   ActionId _lastAction;
@@ -169,7 +177,7 @@ abstract class Store<T, A> {
   void dispose() {
     _controller.close();
     _queue.clear();
-    _watchers.clear();
+    _workers.clear();
     _defaultMiddlewares.clear();
   }
 
@@ -179,7 +187,7 @@ abstract class Store<T, A> {
 
   void _internalDispatch(_QueuedAction qa) {
     reducer(qa.mutationType);
-    _notifyWorkers(qa.mutationType);
+    _notifyWorkers();
   }
 
   /// This will made private every change has to go through Dispatcher as action.
@@ -203,26 +211,19 @@ abstract class Store<T, A> {
   }
 
   /// Add a listerner that executes everytime the specified action is executed
-  void addWorker(A mutation, ActionWorker<A> worker) {
-    if (_watchers.containsKey(mutation))
-      _watchers[mutation].add(worker);
-    else
-      _watchers[mutation] = <ActionWorker<A>>[worker];
-  }
+  void addWorker(Worker worker) => _workers.add(worker);
 
   /// Executes all workers attached to the specified mutation
-  void _notifyWorkers(A mutation) {
-    if (_watchers.containsKey(mutation))
-      for (var worker in _watchers[mutation]) {
-        worker.call(dispatch);
-      }
+  void _notifyWorkers() {
+    for (var i = 0; i < _workers.length; i++) {
+      _workers[i].execute(cData);
+      if (_workers[i]._completed) _workers.removeAt(i);
+    }
   }
 
   /// Returns `true` if a worker is removed
-  bool removeWorker(A mutation, ActionWorker worker) {
-    if (!_watchers.containsKey(mutation)) return false;
-    _watchers[mutation].removeWhere((element) => element == worker);
-    return true;
+  void removeWorker(Worker worker) {
+    _workers.removeWhere((element) => element == worker);
   }
 
   void _emitError(Object error) => updateStateWithError(error);
