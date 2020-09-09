@@ -23,6 +23,8 @@ environment:
 dependencies:
   fluttertoast: ^7.0.4
   http: ^0.12.2
+  nano:
+    path: ../../
   flutter:
     sdk: flutter
 
