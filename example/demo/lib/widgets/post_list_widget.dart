@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:demo/exceptions.dart';
 import 'package:demo/models/models.dart';
 import 'package:demo/refs.dart';
+import 'package:demo/views/post_comments.dart';
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 
@@ -21,8 +25,17 @@ class _PostListState extends State<PostList> {
       waiting: (context) => Center(
         child: CircularProgressIndicator(),
       ),
+      onError: (context, error) {
+        if (error is SocketException)
+          return Center(
+              child: Icon(Icons.signal_cellular_connected_no_internet_4_bar));
+        else if (error is InvalidRequest)
+          return Center(child: Icon(Icons.error_outline));
+        else
+          return Center(child: Text("Something unexpected happened"));
+      },
       onData: (context, data) {
-        var posts;
+        List<Post> posts;
         if (widget.userId == null)
           posts = data;
         else
@@ -32,6 +45,8 @@ class _PostListState extends State<PostList> {
         return ListView.builder(
           itemCount: posts.length,
           itemBuilder: (context, index) => ListTile(
+            onTap: () => Navigator.pushNamed(context, '/comments',
+                arguments: PostCommentsArgs(posts[index].id)),
             title: Text(posts[index].title),
             isThreeLine: true,
             subtitle: Text(posts[index].body),

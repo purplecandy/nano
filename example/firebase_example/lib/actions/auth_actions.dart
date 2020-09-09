@@ -29,7 +29,8 @@ class AuthActions {
       );
       return result.user;
     },
-    mutation: (user, _) => Mutation(authRef.store, SignInMutation(user)),
+    store: (_) => authRef.store,
+    mutation: (user, _) => SignInMutation(user),
   );
 
   static final signOutAction = ActionRef<Null, FirebaseUser>(
@@ -37,6 +38,7 @@ class AuthActions {
       await FirebaseAuth.instance.signOut();
       return;
     },
-    mutation: (_, __) => Mutation(authRef.store, SignOutMutation()),
+    store: (_) => authRef.store,
+    mutation: (_, __) => SignOutMutation(),
   );
 }

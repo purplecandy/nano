@@ -2,6 +2,7 @@ import 'package:demo/actions/actions.dart';
 import 'package:demo/database/database.dart';
 import 'package:demo/refs.dart';
 import 'package:demo/views/authenticate.dart';
+import 'package:demo/views/post_comments.dart';
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 import 'home.dart';
@@ -36,6 +37,7 @@ class _AppState extends State<App> {
         '/': (context) =>
             StoreManager(initialize: [postsRef], child: HomeView()),
         '/auth': (context) => AuthentiateView(),
+        '/comments': (context) => PostCommnetsRoute(),
       },
     );
   }

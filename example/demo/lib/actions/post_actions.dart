@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:demo/api/api.dart';
 import 'package:demo/exceptions.dart';
 import 'package:demo/refs.dart';
@@ -26,4 +25,22 @@ class PostActions {
       },
       mutation: (posts, _) => AddPostMutation(posts),
       store: (_) => postsRef.store);
+  static final fetchComments = ActionRef<int, List<CommentModel>>(
+    body: (id) async {
+      final url = ApiUrls.postComments(id);
+      final resp = await http.get(url);
+      if (resp.statusCode == 200) {
+        final jsonData = json.decode(resp.body);
+        final List<CommentModel> commetns = [];
+        for (var item in jsonData) {
+          commetns.add(CommentModel.fromJson(item));
+        }
+        return commetns;
+      } else {
+        throw InvalidRequest();
+      }
+    },
+    mutation: (comments, _) => CommentMutation(comments),
+    store: (_) => commentsRef.store,
+  );
 }

@@ -28,7 +28,7 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       else
         color.add(Colors.deepPurpleAccent);
     });
-    PostActions.fetch().run();
+    PostActions.fetch(onError: (e) => e).run();
   }
 
   @override

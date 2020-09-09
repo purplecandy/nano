@@ -12,15 +12,14 @@ class PleaseSignIn extends StatelessWidget {
       AuthActions.signInAction(
           payload: Credentials("example@example.com", "1234"),
           onError: (error) {
-            if (error is PlatformException) {
-              if (error.code == "ERROR_WRONG_PASSWORD") {
-                scaffold.currentState.showSnackBar(SnackBar(
-                  content: Text("Wrong password"),
-                  backgroundColor: Colors.redAccent,
-                ));
-              }
+            if (error is PlatformException &&
+                error.code == "ERROR_WRONG_PASSWORD") {
+              scaffold.currentState.showSnackBar(SnackBar(
+                content: Text("Wrong password"),
+                backgroundColor: Colors.redAccent,
+              ));
             }
-            return null;
+            return error;
           })
         ..run();
     else
@@ -33,22 +32,45 @@ class PleaseSignIn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffold,
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Center(child: Text("Please Sign In")),
-          FlatButton(
-            onPressed: () => handleSignIn(false),
-            child: Text("Login"),
-            color: Colors.blue,
+      body: Center(
+        child: Container(
+          color: Colors.deepPurple[50],
+          height: 250,
+          width: MediaQuery.of(context).size.width * 0.8,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Center(
+                  child: Text(
+                "Please Sign In",
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 22,
+                ),
+              )),
+              Container(
+                padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 0.0),
+                width: double.maxFinite,
+                child: FlatButton(
+                  onPressed: () => handleSignIn(false),
+                  child: Text("Login"),
+                  textColor: Colors.white,
+                  color: Colors.deepPurpleAccent,
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(12.0, 4.0, 12.0, 0.0),
+                width: double.maxFinite,
+                child: FlatButton(
+                  onPressed: () => handleSignIn(true),
+                  child: Text("Try Invalid Login"),
+                  textColor: Colors.white,
+                  color: Colors.deepPurpleAccent,
+                ),
+              ),
+            ],
           ),
-          FlatButton(
-            onPressed: () => handleSignIn(true),
-            child: Text("Try Invalid Login"),
-            color: Colors.blue,
-          ),
-        ],
+        ),
       ),
     );
   }

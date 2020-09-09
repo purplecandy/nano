@@ -5,12 +5,12 @@ import 'package:nano/nano.dart';
 
 class ContactActions {
   static final add = ActionRef<ContactModel, ContactModel>(
-    mutation: (_, payload) =>
-        Mutation(contactRef.store, AddContactMutation(payload)),
+    store: (_) => contactRef.store,
+    mutation: (_, payload) => AddContactMutation(payload),
   );
 
   static final delete = ActionRef<ContactModel, ContactModel>(
-    mutation: (_, payload) =>
-        Mutation(contactRef.store, DeleteContactMutation(payload)),
+    store: (_) => contactRef.store,
+    mutation: (_, payload) => DeleteContactMutation(payload),
   );
 }
