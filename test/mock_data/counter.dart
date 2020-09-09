@@ -35,20 +35,23 @@ class CounterParam {
 
 //Actions
 final incrementRef = ActionRef<CounterStore, Null>(
-  mutation: (_, payload) => Mutation(payload, IncrementMutation()),
+  store: (payload) => payload,
+  mutation: (_, payload) => IncrementMutation(),
 );
 
 final decrementRef = ActionRef<CounterStore, Null>(
-  mutation: (_, payload) => Mutation(payload, DecrementMutation()),
+  store: (payload) => payload,
+  mutation: (_, payload) => DecrementMutation(),
 );
 final errortRef = ActionRef<CounterStore, Null>(
-  mutation: (_, payload) => Mutation(payload, ErrorMutation()),
+  store: (payload) => payload,
+  mutation: (_, payload) => ErrorMutation(),
 );
 
 final setRef = ActionRef<CounterParam, void>(
+  store: (payload) => payload.store,
   body: (payload) async {
     await Future.delayed(Duration(milliseconds: payload.seconds));
   },
-  mutation: (result, payload) =>
-      Mutation(payload.store, CountMutation(payload.count)),
+  mutation: (result, payload) => CountMutation(payload.count),
 );
