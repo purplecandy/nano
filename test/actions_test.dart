@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nano/src/exceptions.dart';
 import 'mock_data/counter.dart';
 
 main() {
@@ -16,7 +17,7 @@ main() {
       await setRef(payload: CounterParam(counter, 10, 100)).run();
     });
 
-    test("Asynchronous Execution", () async {
+    test("Asynchronous Dependent Execution", () async {
       final counter = CounterStore();
       expect(counter.rawStream, emitsInOrder([0, 5, 15, 10]));
       counter.stream.listen((event) => print(event));
@@ -27,6 +28,30 @@ main() {
       action =
           setRef(payload: CounterParam(counter, 10, 100), waitFor: [action.id])
             ..run();
+    });
+
+    test("Failed Dependency Execution", () async {
+      final counter = CounterStore();
+      bool failed = false;
+      expect(
+        counter.rawStream,
+        emitsInOrder([0, 5]),
+      );
+      counter.stream.listen((event) => print(event));
+      var action = setRef(payload: CounterParam(counter, 5, 200))..run();
+      action = setRef(
+          payload: CounterParam(counter, null, 200), waitFor: [action.id])
+        ..run();
+      action = setRef(
+        payload: CounterParam(counter, 10, 100),
+        onError: (e) {
+          if (e is IncompleteDependency) failed = true;
+          return;
+        },
+        waitFor: [action.id],
+      )..run();
+      await Future.delayed(Duration(milliseconds: 300));
+      expect(failed, true);
     });
   });
 }

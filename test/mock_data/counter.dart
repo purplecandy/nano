@@ -51,6 +51,7 @@ final errortRef = ActionRef<CounterStore, Null>(
 final setRef = ActionRef<CounterParam, void>(
   store: (payload) => payload.store,
   body: (payload) async {
+    if (payload.count == null) throw Exception("Count value can't be null");
     await Future.delayed(Duration(milliseconds: payload.seconds));
   },
   mutation: (result, payload) => CountMutation(payload.count),
