@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:nano/src/exceptions.dart';
 import 'package:nano/src/state_manager.dart';
 import 'package:nano/src/actions.dart';
 
@@ -42,10 +43,19 @@ class Dispatcher {
     _busy = true;
     for (int ii = 0; ii < _waiting.length; ii++) {
       final item = _waiting[ii];
-      if (_checkActionsCompleted(item.action.waitFor)) {
-        item.action.clear(item.id);
-        _actions[item.id] = item.action;
-        await _execute(item.id);
+      try {
+        if (_checkActionsCompleted(item.action.waitFor, item.action.id)) {
+          item.action.clear(item.id);
+          _actions[item.id] = item.action;
+          await _execute(item.id);
+          _waiting.removeAt(ii);
+          ii--;
+        }
+      } catch (e) {
+        if (item.action.onError != null)
+          item.action.onError(e);
+        else
+          print(e);
         _waiting.removeAt(ii);
         ii--;
       }
@@ -53,11 +63,17 @@ class Dispatcher {
     _busy = false;
   }
 
-  bool _checkActionsCompleted(List<ActionId> waiting) {
+  bool _checkActionsCompleted(List<ActionId> waiting, ActionId id) {
     if (waiting == null || waiting.isEmpty) return true;
     int i = 0;
     for (var actionId in waiting) {
-      if (_isCompleted.containsKey(actionId)) i++;
+      if (_isCompleted.containsKey(actionId)) {
+        if (_isCompleted[actionId])
+          i++;
+        else
+          throw IncompleteDependency(
+              "$id has an incomplete depedency on $actionId");
+      }
     }
     return i == waiting.length;
   }
@@ -75,36 +91,44 @@ class Dispatcher {
       // If the action has dependency on other action.
       // Check if the dependecies have completed dispatching
 
-      if (_checkActionsCompleted(action.waitFor)) {
-        //proceed with normal execution
-        try {
-          if (action.hasProxyMutation) {
-            // will be mutated by proxy stream
-            for (var store in action.getProxyStores()) {
-              store.setLastAction(id);
-            }
-            // this should cause change in the proxy stream
-            _proxyVerification[id] = id;
-            await action.proxyRun();
-          } else {
-            // will be mutated by dispatch
-            final mutation = await action();
-            dispatch(currentStore, mutation);
-            _isCompleted[id] = true;
-            _controller.add(_isCompleted);
-            action.onDone?.call();
-          }
-        } catch (e, stack) {
+      try {
+        if (_checkActionsCompleted(action.waitFor, id)) {
+          //proceed with normal execution
+
+          final mutation = await action();
+          dispatch(currentStore, mutation);
+          action.onDone?.call();
+          _isCompleted[id] = true;
+          _controller.add(_isCompleted);
+
+          // if (action.hasProxyMutation) {
+          //   // will be mutated by proxy stream
+          //   for (var store in action.getProxyStores()) {
+          //     store.setLastAction(id);
+          //   }
+          //   // this should cause change in the proxy stream
+          //   _proxyVerification[id] = id;
+          //   await action.proxyRun();
+          // } else {
+          //   // will be mutated by dispatch
+          // }
+
+        } else {
+          //Add it to the queue
+          _waiting.add(_Waiting(id, action));
+        }
+      } catch (e, stack) {
+        if (action.onError != null) {
+          final error = action.onError.call(e);
+          if (error != null) emitError(currentStore, error);
+        } else {
           print(e);
           print(stack);
-          final error = action.onError?.call(e);
-          if (error != null) emitError(currentStore, error);
-        } finally {
-          _actions.remove(id);
         }
-      } else {
-        //Add it to the queue
-        _waiting.add(_Waiting(id, action));
+        _isCompleted[id] = false;
+        _controller.add(_isCompleted);
+      } finally {
+        _actions.remove(id);
       }
     }
   }
@@ -122,12 +146,3 @@ class Dispatcher {
     }
   }
 }
-
-/// Create a new actions to be dispatched
-Future<void> dAdd(Action action) async => await Dispatcher.instance.add(action);
-
-/// Get the Id of the next possible Action
-ActionId dnextId() => Dispatcher.instance.nextId();
-
-/// Verify if an action completed successfully
-// bool dVerify(ActionId id) => Dispatcher.instance.verify(id);
