@@ -8,17 +8,18 @@ class SignInMutation extends AuthMutation {
   SignInMutation(this.user);
 }
 
-class SingOutMutation extends AuthMutation {}
+class SignOutMutation extends AuthMutation {}
 
 class AuthStore extends Store<AuthModel, AuthMutation> {
-  AuthStore() : super(AuthModel(AuthState.unauthorized, null));
+  @override
+  bool get setInitialState => false;
 
   @override
   void reducer(AuthMutation mutation) {
     if (mutation is SignInMutation)
       updateState(AuthModel(AuthState.authorized, mutation.user));
 
-    if (mutation is SingOutMutation) {
+    if (mutation is SignOutMutation) {
       updateState(AuthModel(AuthState.unauthorized, null));
     }
   }

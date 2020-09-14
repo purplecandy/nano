@@ -21,6 +21,5 @@ class PostStore extends Store<List<Post>, AddPostMutation> {
       cData.addAll(mutation.posts);
       updateState(cData);
     }
-    ;
   }
 }

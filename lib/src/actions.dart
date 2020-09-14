@@ -83,7 +83,7 @@ class Action<T, K> implements Function {
   }) {
     return Action(
       id: Dispatcher.instance.getId(),
-      mutation: mutation,
+      mutation: (r, p) => mutation,
       store: store,
       onDone: onDone,
       onError: onError,

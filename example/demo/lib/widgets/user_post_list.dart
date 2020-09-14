@@ -12,6 +12,16 @@ class UserPosts extends StatelessWidget {
     return StateBuilder<AuthModel>(
       initialState: authRef.store.state,
       stream: authRef.store.stream,
+      waiting: (context) => Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Text("Waiting for Database to initialize"),
+          Container(
+              width: 70,
+              padding: const EdgeInsets.all(8),
+              child: LinearProgressIndicator()),
+        ],
+      ),
       onData: (context, data) {
         switch (data.state) {
           case AuthState.authorized:

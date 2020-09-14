@@ -229,16 +229,6 @@ abstract class Store<T, A> {
   void _emitError(Object error) => updateStateWithError(error);
 }
 
-dispatch(dynamic store, dynamic type) {
-  if (store is Store)
-    store._dispatch(type);
-  else
-    throw Exception("Invalid store");
-}
+dispatch(Store store, dynamic type) => store._dispatch(type);
 
-emitError(Store store, Object error) {
-  if (store is Store)
-    store._emitError(error);
-  else
-    throw Exception("Invalid store");
-}
+emitError(Store store, Object error) => store._emitError(error);

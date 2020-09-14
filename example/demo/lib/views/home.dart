@@ -1,7 +1,5 @@
 import 'package:demo/actions/post_actions.dart';
-import 'package:demo/models/auth_model.dart';
 import 'package:demo/refs.dart';
-import 'package:demo/views/authenticate.dart';
 import 'package:demo/widgets/post_list_widget.dart';
 import 'package:demo/widgets/user_post_list.dart';
 import 'package:flutter/material.dart';
@@ -47,18 +45,13 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
               bottom: TabBar(
                   indicatorColor: Colors.white,
                   controller: controller,
-                  tabs: [
-                    Tab(text: "All"),
-                    Tab(
-                      text: "You",
-                    )
-                  ]),
+                  tabs: [Tab(text: "You"), Tab(text: "All")]),
             ),
           ),
         ),
         body: TabBarView(
           controller: controller,
-          children: [PostList(), UserPosts()],
+          children: [UserPosts(), PostList()],
         ),
       ),
     );

@@ -1,5 +1,4 @@
 import 'package:demo/exceptions.dart';
-import 'package:demo/models/auth_model.dart';
 import 'package:demo/models/models.dart';
 import 'package:demo/refs.dart';
 import 'package:demo/stores/auth_store.dart';
