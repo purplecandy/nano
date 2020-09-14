@@ -1,6 +1,6 @@
 name: nano
-description: An application architecture pattern than a framework for Flutter utilizing a unidirectional data flow.
-version: 0.1.0
+description: Nano makes it easier to build and maintain complex Flutter apps.
+version: 0.2.0
 homepage: https://github.com/purplecandy/nano
 
 environment:
