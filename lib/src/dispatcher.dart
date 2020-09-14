@@ -15,7 +15,6 @@ class Dispatcher {
   final Map<ActionId, Action> _actions = {};
   final List<_Waiting> _waiting = [];
   final Map<ActionId, bool> _isCompleted = {};
-  final Map<ActionId, dynamic> _proxyVerification = {};
   StreamController<Map<ActionId, bool>> _controller;
   Stream<Map<ActionId, bool>> _stream;
 
@@ -98,19 +97,6 @@ class Dispatcher {
           action.onDone?.call();
           _isCompleted[id] = true;
           _controller.add(_isCompleted);
-
-          // if (action.hasProxyMutation) {
-          //   // will be mutated by proxy stream
-          //   for (var store in action.getProxyStores()) {
-          //     store.setLastAction(id);
-          //   }
-          //   // this should cause change in the proxy stream
-          //   _proxyVerification[id] = id;
-          //   await action.proxyRun();
-          // } else {
-          //   // will be mutated by dispatch
-          // }
-
         } else {
           //Add it to the queue
           _waiting.add(_Waiting(id, action));
@@ -128,19 +114,6 @@ class Dispatcher {
       } finally {
         _actions.remove(id);
       }
-    }
-  }
-
-  bool verify(ActionId id, [Mutation mutation]) {
-    return _proxyVerification.containsKey(id);
-  }
-
-  void completeProxyAction(ActionId id) {
-    if (_proxyVerification.containsKey(id)) {
-      _proxyVerification.remove(id);
-      _isCompleted[id] = true;
-      _controller.add(_isCompleted);
-      //TODO: call on complete
     }
   }
 }

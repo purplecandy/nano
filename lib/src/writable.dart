@@ -1,6 +1,11 @@
 import 'dart:async';
 import 'package:nano/nano.dart';
 
+/// Writable is a quick way to create a store like entity, where you can directly add states withoutt worrying about mutations.
+///
+/// It's only ment to be used within widget's instead of `setState()` or when you want to define a stream controller
+///
+/// You also need to call the `dispose()` to release the resources
 class Writable<T> {
   final _defaultMiddlewares = List<Middleware>();
 

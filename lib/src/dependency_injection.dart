@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 
 enum StoreTokenStatus { initialized, disposed, uninitialized, unknown }
 
-/// Experimental Dependency Injection
-/// Please use tools that you prefer
 class StoreToken<T> {
   final String value;
   const StoreToken(this.value);

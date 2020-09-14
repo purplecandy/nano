@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:meta/meta.dart';
 
+/// Current state of the store.
 @immutable
 class StateSnapshot<T> {
   final T data;

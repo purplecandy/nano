@@ -9,6 +9,8 @@ typedef Widget DataBuilderFn<T>(BuildContext context, T data);
 typedef Widget ErrorBuilderFn(BuildContext context, Object error);
 typedef Widget WaitingBuilderFn(BuildContext context);
 
+/// StateBuilder automatiaclly rebuilds it's child widgets when a new state is arrived.
+/// It behvaes like a StreamBuilder but it gives you control.
 class StateBuilder<T> extends StatefulWidget {
   final StateSnapshot<T> initialState;
   final Stream<StateSnapshot<T>> stream;

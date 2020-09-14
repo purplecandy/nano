@@ -11,9 +11,21 @@ import 'middleware.dart';
 import 'state_snapshot.dart';
 part 'state_utils.dart';
 
+/// Worker are callback that do when the Store state has met the specified condition
+/// Advantanges of workers over just listening the store for changes is that it gives you a `limit` that specifies
+/// the number of times it needs to be called and after that it automatically get's removed
+///
+/// Also Worker provides a little nicer syntax, it's totally depedening upon the use case whether you want to use a worker or just listen to stream.
 class Worker<T> {
+  /// When to execute the worker, currently it only checks condition for new values, the current value will be skipped.
   final bool Function(T data) condition;
+
+  /// The task that needs to performed when the condition is met
   final void Function() callback;
+
+  /// Number of times it needs to be called
+  ///
+  /// If not specified it will run infintely and you will have to explicitly remove it
   final int limit;
   int called = 0;
   Worker(this.condition, this.callback, {this.limit})
@@ -36,6 +48,7 @@ class LastAction {
   LastAction(this.id, this.mutationType);
 }
 
+/// BehaviorSubject that retains the last successfull data on receiving an error.
 class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
   final BehaviorSubject<T> _subject;
   T _cachedValue;
