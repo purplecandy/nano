@@ -1,9 +1,5 @@
 part of 'state_manager.dart';
 
-class ActionTerminatedException implements Exception {
-  ActionTerminatedException([var message]);
-}
-
 class _QueuedAction<A> {
   final A mutationType;
   _QueuedAction({@required this.mutationType});

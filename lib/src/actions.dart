@@ -1,19 +1,16 @@
 import 'dart:async';
-
 import 'package:meta/meta.dart';
 import 'package:nano/nano.dart';
 
 typedef Future<K> ActionBody<T, K>(T payload);
+typedef dynamic ActionMutation<K, T>(K response, T payload);
+typedef List<Store> ProxyStores<T>(T payload);
 
 class Mutation {
   final Store store;
   final dynamic type;
   Mutation(this.store, this.type);
 }
-
-typedef dynamic ActionMutation<K, T>(K response, T payload);
-
-typedef List<Store> ProxyStores<T>(T payload);
 
 class ActionId {
   String token;
@@ -36,8 +33,8 @@ class Action<T, K> implements Function {
   final Store store;
   Action({
     @required this.id,
-    @required this.body,
-    @required this.payload,
+    this.body,
+    this.payload,
     @required this.mutation,
     @required this.store,
     this.waitFor,
@@ -45,12 +42,12 @@ class Action<T, K> implements Function {
     this.hasProxyMutation,
     this.onError,
     this.onDone,
-  });
+  })  : assert(id != null),
+        assert(mutation != null),
+        assert(store != null);
 
   Future call() async {
-    assert(mutation != null);
-    // Result of the computation
-    var result;
+    K result;
     if (body != null) result = await Future.microtask(() => body(payload));
     final mut = mutation(result, payload);
     // if (!hasProxyMutation && muts.isEmpty)
@@ -75,6 +72,26 @@ class Action<T, K> implements Function {
     assert(id != null);
     waitFor.clear();
   }
+
+  ///Creates an `Action` without any reference for quickly dispatching certain mutation that doesn't require any `body` parameter
+  factory Action.anonymous(
+    Store store,
+    dynamic mutation, {
+    Object Function(Object error) onError,
+    void Function() onDone,
+    List<ActionId> waitFor,
+  }) {
+    return Action(
+      id: Dispatcher.instance.getId(),
+      mutation: mutation,
+      store: store,
+      onDone: onDone,
+      onError: onError,
+      waitFor: waitFor,
+      body: null,
+      payload: null,
+    );
+  }
 }
 
 /// ActionRef will return a copy of Action which can be passed to the dispatcher to mutate changes
@@ -82,13 +99,13 @@ class ActionRef<T, K> implements Function {
   final ActionBody<T, K> body;
   final ActionMutation<K, T> mutation;
   final Store Function(T payload) store;
-  final bool hasProxyMutation;
+
   ActionRef({
     @required this.mutation,
     @required this.store,
     this.body,
-    @deprecated this.hasProxyMutation = false,
-  });
+  })  : assert(mutation != null),
+        assert(store != null);
 
   Action<T, K> call({
     T payload,
@@ -96,7 +113,6 @@ class ActionRef<T, K> implements Function {
     Object Function(Object error) onError,
     void Function() onDone,
   }) {
-    assert(mutation != null);
     return Action<T, K>(
       id: Dispatcher.instance.getId(),
       body: body,
@@ -104,7 +120,6 @@ class ActionRef<T, K> implements Function {
       mutation: mutation,
       payload: payload,
       waitFor: waitFor,
-      hasProxyMutation: hasProxyMutation,
       onDone: onDone,
       onError: onError,
     );
@@ -128,6 +143,7 @@ class ProxyActionRef<T, K> implements Function {
     List<ActionId> waitFor,
   }) {
     assert(_body != null);
+    // ignore: missing_required_param
     return Action<T, K>(
       id: Dispatcher.instance.getId(),
       body: _body,

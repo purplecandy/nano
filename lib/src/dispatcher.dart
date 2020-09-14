@@ -31,10 +31,8 @@ class Dispatcher {
 
   String _generateToken() => (_prefix + (_lastId++).toString());
 
+  /// Returns a unique ActionId
   ActionId getId() => ActionId(_generateToken());
-
-  /// Returns the next id
-  ActionId nextId() => ActionId(_prefix + (_lastId + 1).toString());
 
   Stream<Map<ActionId, bool>> get onActionComplete => _stream;
 

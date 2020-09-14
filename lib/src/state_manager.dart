@@ -193,7 +193,7 @@ abstract class Store<T, A> {
   /// This will made private every change has to go through Dispatcher as action.
   /// But I'm still figuring out some good usecase for this
   /// Dispatch Actions which will mutate the state
-  void dispatch(
+  void _dispatch(
     A mutation,
   ) {
     _queue.enqueue(
@@ -231,7 +231,7 @@ abstract class Store<T, A> {
 
 dispatch(dynamic store, dynamic type) {
   if (store is Store)
-    store.dispatch(type);
+    store._dispatch(type);
   else
     throw Exception("Invalid store");
 }

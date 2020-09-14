@@ -4,3 +4,7 @@ class IncompleteDependency implements Exception {
   @override
   String toString() => "Exception: " + message;
 }
+
+class ActionTerminatedException implements Exception {
+  ActionTerminatedException([var message]);
+}
