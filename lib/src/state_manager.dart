@@ -4,16 +4,12 @@ import 'package:flutter/foundation.dart';
 import 'package:nano/nano.dart';
 import 'package:nano/src/utils.dart';
 import 'package:rxdart/rxdart.dart';
-export 'package:rxdart/transformers.dart';
 import 'package:rxdart/subjects.dart';
 import 'package:meta/meta.dart';
 import 'utils.dart';
 import 'middleware.dart';
 import 'state_snapshot.dart';
 part 'state_utils.dart';
-
-/// Author: Nadeem Siddique
-///
 
 class Worker<T> {
   final bool Function(T data) condition;

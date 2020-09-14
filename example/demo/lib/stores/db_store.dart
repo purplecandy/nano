@@ -10,6 +10,8 @@ class DbStore extends Store<Database, DBMutation> {
   @override
   bool get setInitialState => false;
 
+  /// Computed values such as getters and functions that do not cause mutation in the state are allowed
+  /// to be directly be accssible
   Map<String, dynamic> find(String username) => cData.find(username);
 
   @override

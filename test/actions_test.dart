@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nano/nano.dart';
 import 'package:nano/src/exceptions.dart';
 import 'mock_data/counter.dart';
 
