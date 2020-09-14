@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 enum StoreTokenStatus { initialized, disposed, uninitialized, unknown }
 
+/// A unique token that represents a certain instance of the store
 class StoreToken<T> {
+  /// token value
   final String value;
   const StoreToken(this.value);
 
@@ -17,6 +19,35 @@ class StoreToken<T> {
 
 typedef StoreDisposer<T> = void Function(T store);
 
+/// Pool is a depdency injection tool designed specifically for managing stores acros your apps.
+/// It's recommended that you still use Provider/Consumer for passing around other dependencies or some other
+/// serivce locator as it can be really hectic if you try to make it with Pool.
+///
+///
+/// Pool from the name is a collection of `Stores`. Where all the stores are stores in a singleton but it doesn't
+/// create singletons of the `Stores` itself. Every store is represented with a unique id called `StoreToken`, this token
+/// is used to reference a partiuclar instance it has been registered with.
+///
+/// Pool tries to replicate the standard way of releasing resources when they have been used like the `Widget` but without any context.
+///
+/// The life cycle of a store is:
+/// - register
+/// - initialized
+/// - disposed
+///
+/// Once your store has been disposed its `StoreToken`can no loger access or re-initialize the store. But there are certain exceptions,
+/// sometimes a store's life cycle is short and it get's created and disposed again, but we can't create and reference
+/// at compile time in such conditions, to overcome that a store can be initialized as recreateable, which can be
+/// uninitialized which means release the resources but still being able to use the same token to create another instances.
+///
+/// In such a case the life cycle of a store becomes:
+///  - register
+///  - initialize
+///  - uninitialize
+///
+/// To use it first you need to register an instance to get a token, this can be done by calling `Pool.instance.register()`
+///
+///
 class Pool {
   int _tokens = 0;
   final Map<StoreToken, Function> _uninitialized = {};
@@ -42,6 +73,8 @@ class Pool {
   }
 
   /// Initializes the Store
+  ///
+  /// set `recreate = true` to make it recreateable
   void create(StoreToken token, {bool recreate = false}) {
     if (_uninitialized.containsKey(token))
       try {
@@ -68,6 +101,7 @@ class Pool {
   //   return storeToken;
   // }
 
+  /// Disposes a store
   void disposeStore<T>(StoreToken token, StoreDisposer<T> dispose) {
     if (_uninitialized.containsKey(token)) {
       throw Exception("Tried disposing an unitialized token");
@@ -90,6 +124,7 @@ class Pool {
     }
   }
 
+  /// Returns the store instance from the token
   T obtain<T>(StoreToken token) {
     if (_initialized.containsKey(token))
       return _initialized[token];
@@ -99,6 +134,7 @@ class Pool {
       throw Exception("$token has already been disposed or it doesn't exist");
   }
 
+  /// Releases the resources of a recreateable store
   void uninitialize<T>(StoreToken token, StoreDisposer<T> dispose) {
     if (_uninitialized.containsKey(token))
       throw Exception("$token hasn't been initialized");
@@ -122,6 +158,7 @@ class Pool {
     }
   }
 
+  /// Get current status of a `StoreToken`
   StoreTokenStatus getTokenStatus(StoreToken token) {
     if (_uninitialized.containsKey(token))
       return StoreTokenStatus.uninitialized;
