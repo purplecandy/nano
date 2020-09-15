@@ -1,7 +1,3 @@
-import 'dart:convert';
-
-import 'package:flutter/material.dart';
-
 class CommentModel {
   final int postId, id;
   final String name, email, body;
