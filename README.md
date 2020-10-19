@@ -21,4 +21,4 @@ It helps to build and manage complex views by utilizing a unidirectional data fl
 
 ## Contribution
 
-I'd appreciate all types of contributes PRs, discussions, queries.
+I'd appreciate all types of contributions PRs, discussions, queries.
