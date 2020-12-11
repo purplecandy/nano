@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:nano/src/exceptions.dart';
 import 'package:nano/src/state_manager.dart';
-import 'package:nano/src/actions.dart';
+import 'package:nano/src/action.dart';
 
 class _Waiting {
   final ActionId id;
@@ -83,17 +83,15 @@ class Dispatcher {
   Future<void> _execute(ActionId id) async {
     if (_actions.containsKey(id)) {
       final action = _actions[id];
-      final currentStore = action.store;
-
       // If the action has dependency on other action.
       // Check if the dependecies have completed dispatching
 
       try {
         if (_checkActionsCompleted(action.waitFor, id)) {
           //proceed with normal execution
-
-          final mutation = await action();
-          dispatch(currentStore, mutation);
+          await for (Mutation mutation in action.body()) {
+            sendMutation(mutation.store, mutation.type);
+          }
           action.onDone?.call();
           _isCompleted[id] = true;
           _controller.add(_isCompleted);
@@ -103,9 +101,14 @@ class Dispatcher {
         }
       } catch (e, stack) {
         if (action.onError != null) {
-          final error = action.onError.call(e);
-          if (error != null) emitError(currentStore, error);
+          final errors = action.onError.call(e);
+          if (errors != null) {
+            for (var error in errors) {
+              emitError(error.store, error.type);
+            }
+          }
         } else {
+          print("Unhandled Action Error: $id");
           print(e);
           print(stack);
         }

@@ -42,11 +42,11 @@ class Worker<T> {
   }
 }
 
-class LastAction {
-  final ActionId id;
-  final dynamic mutationType;
-  LastAction(this.id, this.mutationType);
-}
+// class LastAction {
+//   final ActionId id;
+//   final dynamic mutationType;
+//   LastAction(this.id, this.mutationType);
+// }
 
 /// BehaviorSubject that retains the last successfull data on receiving an error.
 class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
@@ -110,9 +110,9 @@ abstract class Store<T, A> {
   final _workers = List<Worker>();
   final _queue = _ActionQueue();
 
-  ActionId _lastAction;
+  // ActionId _lastAction;
 
-  ActionId get lastAction => _lastAction;
+  // ActionId get lastAction => _lastAction;
 
   /// Controller that manges the actual data events
   ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
@@ -190,7 +190,7 @@ abstract class Store<T, A> {
     _defaultMiddlewares.clear();
   }
 
-  void setLastAction(ActionId last) => _lastAction = last;
+  // void setLastAction(ActionId last) => _lastAction = last;
 
   void reducer(A mutation);
 
@@ -238,6 +238,6 @@ abstract class Store<T, A> {
   void _emitError(Object error) => updateStateWithError(error);
 }
 
-dispatch(Store store, dynamic type) => store._dispatch(type);
+sendMutation(Store store, dynamic type) => store._dispatch(type);
 
 emitError(Store store, Object error) => store._emitError(error);
