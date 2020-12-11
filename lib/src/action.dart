@@ -28,12 +28,34 @@ typedef List<Mutation> ActionMutations<T, K>(K response, T payload);
 typedef dynamic ActionMutation<K, T>(K response, T payload);
 typedef List<Store> ProxyStores<T>(T payload);
 
+/// Actions that are send to the Dispatcher and executed
+/// which causes mutation on the specified store's state
 class Action {
+  /// You perform any async actions that are required for a mutation and yeild the mutation
+  ///
+  /// Since it's a stream multiple mutations can be emitted from a single action
+  ///
+  /// You can also call another action here by using `yield*` to emit all the events from the action
+  ///
+  /// Any unhandled exceptions will execute `onError()` if passed
   final Stream<Mutation> Function() body;
+
+  /// A list of fallback mutations you want to send to as Error events
+  ///
+  /// This is will update the state of the store as an error so you can emit any object it will not affect the actual state
   final List<Mutation> Function(Object error) onError;
+
+  /// Executed when the action has been successfully executed
   final void Function() onDone;
   final ActionId _id = Dispatcher.instance.getId();
+
+  /// A list actions that you want to wait for them to be executed successfully before executing this action.
+  /// If anyone of the action fails in then the action will not execute
+  ///
+  /// This can be used to achive consistency between shared stores, as this will ensure when it only execute if the depdencies have executed successfuly.
   final List<ActionId> waitFor;
+
+  /// A unique id that represents a specific instance of an action
   ActionId get id => _id;
   Action(this.body, {this.onDone, this.onError, this.waitFor});
   void clear(ActionId id) {
