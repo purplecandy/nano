@@ -38,7 +38,10 @@ class _PostCommentsViewState extends State<PostCommentsView> {
   void initState() {
     super.initState();
     PostActions.fetchComments(
-        payload: widget.postId, onError: (e) => e.toString()).run();
+        payload: widget.postId,
+        onError: (e) => [
+              Mutation(postsRef.store, e.toString()),
+            ]).run();
   }
 
   @override
