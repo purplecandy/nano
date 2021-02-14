@@ -1,3 +1,8 @@
+## [0.2.1] - New way to create actions with full backwards compatibility
+
+Action can now be defined in a more straight forward way
+StateRebuilder now supports lastValue and value emitted by the event
+
 ## [0.2.0] - Public Release
 
 Initial public release of the package

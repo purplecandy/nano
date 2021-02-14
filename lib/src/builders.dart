@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 import 'state_snapshot.dart';
 
-typedef bool BuilderCondition<T>(StateSnapshot<T> state);
+typedef bool BuilderCondition<T>(
+    StateSnapshot<T> oldState, StateSnapshot<T> newState);
 typedef Widget SnapBuilder<T>(
     BuildContext context, StateSnapshot<T> event, bool initialized);
 typedef Widget DataBuilderFn<T>(BuildContext context, T data);
@@ -48,7 +49,7 @@ class _StateBuilderState<T> extends State<StateBuilder<T>> {
     _lastValue = widget.initialState;
     _subscription = stream.listen((event) {
       if (widget.rebuildOnly != null) {
-        if (widget.rebuildOnly.call(event)) {
+        if (widget.rebuildOnly.call(_lastValue, event)) {
           _lastValue = event;
         }
       } else {
