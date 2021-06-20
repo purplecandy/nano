@@ -27,7 +27,7 @@ class _AppState extends State<App> {
     dbRef.store.addWorker(Worker<Database>((db) => db.initialized, () {
       //once the database has been initialize we will update the AuthStore
       Action(() async* {
-        yield Mutation(authRef.store, SignOutMutation);
+        yield Mutation(authRef.store, SignOutMutation());
       }).run();
     }, limit: 1));
   }

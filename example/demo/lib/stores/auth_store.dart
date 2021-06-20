@@ -14,6 +14,7 @@ class AuthStore extends Store<AuthModel, AuthMutation> {
   @override
   bool get setInitialState => false;
 
+  
   @override
   void reducer(AuthMutation mutation) {
     if (mutation is SignInMutation)
