@@ -1,4 +1,5 @@
 import 'package:demo/actions/actions.dart';
+import 'package:demo/actions/actions.dart' as actions;
 import 'package:demo/database/database.dart';
 import 'package:demo/refs.dart';
 import 'package:demo/stores/auth_store.dart';
@@ -21,7 +22,8 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    DatabaseActions.create().run();
+    // DatabaseActions.create().run();
+    Action(actions.create).run();
     dbRef.store.addWorker(Worker<Database>((db) => db.initialized, () {
       //once the database has been initialize we will update the AuthStore
       Action(() async* {

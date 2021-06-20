@@ -1,10 +1,12 @@
-import 'package:demo/actions/post_actions.dart';
+import 'package:demo/actions/actions.dart' as actions;
 import 'package:demo/models/models.dart';
 import 'package:demo/refs.dart';
 import 'package:demo/values/colors.dart';
 import 'package:demo/widgets/comment_list.dart';
 import 'package:flutter/material.dart';
-import 'package:nano/nano.dart';
+import 'package:nano/nano.dart' as n;
+
+import '../refs.dart';
 
 class PostCommentsArgs {
   final int id;
@@ -17,7 +19,7 @@ class PostCommnetsRoute extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final PostCommentsArgs args = ModalRoute.of(context).settings.arguments;
-    return StoreManager(
+    return n.StoreManager(
       recreatable: [commentsRef],
       uninitialize: [commentsRef],
       child: PostCommentsView(postId: args.id),
@@ -37,11 +39,16 @@ class _PostCommentsViewState extends State<PostCommentsView> {
   @override
   void initState() {
     super.initState();
-    PostActions.fetchComments(
-        payload: widget.postId,
-        onError: (e) => [
-              Mutation(postsRef.store, e.toString()),
-            ]).run();
+    n.Action(
+      () => actions.fetchComments(widget.postId),
+      onError: (e) => [n.Mutation(postsRef.store, e.toString())],
+    ).run();
+    
+    // n.PostActions.fetchComments(
+    //     payload: widget.postId,
+    //     onError: (e) => [
+    //           Mutation(postsRef.store, e.toString()),
+    //         ]).run();
   }
 
   @override
@@ -57,7 +64,7 @@ class _PostCommentsViewState extends State<PostCommentsView> {
         backgroundColor: Colors.white,
         elevation: 1,
       ),
-      body: StateBuilder<List<CommentModel>>(
+      body: n.StateBuilder<List<CommentModel>>(
         initialState: commentsRef.store.state,
         stream: commentsRef.store.stream,
         waiting: (context) => Center(child: CircularProgressIndicator()),

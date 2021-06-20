@@ -1,6 +1,8 @@
 import 'package:demo/actions/actions.dart';
-import 'package:flutter/material.dart';
+import 'package:demo/actions/actions.dart' as actions;
+import 'package:flutter/material.dart' hide Action;
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:nano/nano.dart';
 
 class AuthentiateView extends StatefulWidget {
   AuthentiateView({Key key}) : super(key: key);
@@ -12,16 +14,25 @@ class AuthentiateView extends StatefulWidget {
 class _AuthentiateViewState extends State<AuthentiateView> {
   final _username = TextEditingController();
   void hanldeOnTap() {
-    AuthActions.signIn(
-        payload: _username.text.trim(),
-        onError: (e) {
-          Fluttertoast.showToast(msg: "Invalid credentials");
-          return null;
-        },
-        onDone: () {
-          Fluttertoast.showToast(msg: "Success");
-          Navigator.pop(context);
-        }).run();
+    
+    Action(() => actions.signIn(_username.text.trim()), onError: (e) {
+      Fluttertoast.showToast(msg: "Invalid credentials");
+      return null;
+    }, onDone: () {
+      Fluttertoast.showToast(msg: "Success");
+      Navigator.pop(context);
+    }).run();
+
+    // AuthActions.signIn(
+    //     payload: _username.text.trim(),
+    //     onError: (e) {
+    //       Fluttertoast.showToast(msg: "Invalid credentials");
+    //       return null;
+    //     },
+    //     onDone: () {
+    //       Fluttertoast.showToast(msg: "Success");
+    //       Navigator.pop(context);
+    //     }).run();
   }
 
   @override

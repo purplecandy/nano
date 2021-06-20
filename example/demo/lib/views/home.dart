@@ -1,9 +1,10 @@
 import 'package:demo/actions/post_actions.dart';
+import 'package:demo/actions/actions.dart' as actions;
 import 'package:demo/refs.dart';
 import 'package:demo/widgets/post_list_widget.dart';
 import 'package:demo/widgets/user_post_list.dart';
 import 'package:flutter/material.dart';
-import 'package:nano/nano.dart';
+import 'package:nano/nano.dart' as n;
 
 class HomeView extends StatefulWidget {
   HomeView({Key key}) : super(key: key);
@@ -14,7 +15,7 @@ class HomeView extends StatefulWidget {
 
 class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
   final authStore = authRef.store;
-  final color = Writable(state: Colors.redAccent);
+  final color = n.Writable(state: Colors.redAccent);
   TabController controller;
   @override
   void initState() {
@@ -26,7 +27,8 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       else
         color.add(Colors.deepPurpleAccent);
     });
-    PostActions.fetch(onError: (e) => e).run();
+    // PostActions.fetch(onError: (e) => e).run();
+    n.Action(actions.fetch,onError: (e) => e).run();
   }
 
   @override
@@ -36,7 +38,7 @@ class _HomeViewState extends State<HomeView> with TickerProviderStateMixin {
       child: Scaffold(
         appBar: PreferredSize(
           preferredSize: Size.fromHeight(102),
-          child: StateBuilder<Color>(
+          child: n.StateBuilder<Color>(
             stream: color.stream,
             initialState: color.state,
             onData: (_, data) => AppBar(
