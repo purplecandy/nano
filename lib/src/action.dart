@@ -42,7 +42,15 @@ class Action {
 
   /// A list of fallback mutations you want to send to as Error events
   ///
-  /// This is will update the state of the store as an error so you can emit any object it will not affect the actual state
+  /// 
+  /// You're basically emitting state with erros, just a little quicker utilizing the same action
+  /// ```dart
+  /// void reducer(mutation){
+  ///   updateStateWithError(mutation);
+  /// }
+  /// ```
+  /// 
+  /// Feel free to pass any object you want, error and data state are maintained seperately so you can emit errors anytime without worrying about losing your data
   final List<Mutation> Function(Object error) onError;
 
   /// Executed when the action has been successfully executed
