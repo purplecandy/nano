@@ -76,7 +76,7 @@ class _CounterAppState extends State<CounterApp> {
       body: StateBuilder<int>(
         initialState: _counter.state,
         stream: _counter.stream,
-        rebuildOnly: (state) => ((state.data ?? 1) % 2 == 0),
+        rebuildOnly: (old,state) => ((state.data ?? 1) % 2 == 0),
         builder: (context, state, init) =>
             Center(child: Text(state.toString())),
         // onError: (_,   error) => Center(child: Text(error.toString())),
