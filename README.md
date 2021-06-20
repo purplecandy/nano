@@ -6,7 +6,7 @@ It helps to build and manage complex views by utilizing a unidirectional data fl
 
 ## Instalation
 ```yaml
-  nano: ^0.2.0
+  nano: ^0.2.1
 ```
 
 ## Links
@@ -15,9 +15,8 @@ It helps to build and manage complex views by utilizing a unidirectional data fl
 - [Discord](https://discord.gg/pJ4kxMK)
 
 ## Examples
- - [Counter](https://github.com/purplecandy/nano/tree/master/example/counter)
- - [Demo](https://github.com/purplecandy/nano/tree/master/example/demo)
- - [Firebase Example](https://github.com/purplecandy/nano/tree/master/example/firebase_example) Read-only because it's based on an experimental feature, let me know about your thoughts on it
+- [Demo](https://github.com/purplecandy/nano/tree/master/example/demo)
+- [Counter](https://github.com/purplecandy/nano/tree/master/example/counter)
 
 ## Contribution
 
