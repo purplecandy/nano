@@ -89,7 +89,8 @@ class ActionRef<T, K> implements Function {
     assert(mutations != null || (store != null && mutation != null));
     return Action(
       () async* {
-        final result = await Future.microtask(() => body(payload));
+        var result;
+        if (body != null) result = await Future.microtask(() => body(payload));
         if (mutations != null) {
           final listOfMutations = mutations(result, payload);
           for (var mutation in listOfMutations) {
