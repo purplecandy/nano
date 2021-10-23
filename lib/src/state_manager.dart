@@ -28,9 +28,7 @@ class Worker<T> {
   /// If not specified it will run infintely and you will have to explicitly remove it
   final int? limit;
   int called = 0;
-  Worker(this.condition, this.callback, {this.limit})
-      : assert(callback != null),
-        assert(condition != null);
+  Worker(this.condition, this.callback, {this.limit});
 
   bool get _completed => limit == null ? false : limit == called;
 
@@ -103,7 +101,6 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
 
   /// Returns the last cached value emitted
   T get cachedValue => _cachedValue;
-  
 
   @override
   T? get valueOrNull => _subject.valueOrNull;
@@ -147,7 +144,7 @@ abstract class Store<T, A> {
 
   /// Current state
   StateSnapshot<T> get state => _lastEmittedError == null
-      ? StateSnapshot(_controller.value?.data, null)
+      ? StateSnapshot(_controller.value.data, null)
       : StateSnapshot(null, _lastEmittedError);
 
   ///Controller of the event stream
@@ -160,7 +157,8 @@ abstract class Store<T, A> {
   /// Makes tests easier to write
   Stream<T> get rawStream => stream.transform(StreamTransformer.fromHandlers(
       handleData: (snapshot, sink) => sink.add(snapshot.data!),
-      handleError: (error, stackTrace, sink) => sink.addError((error as StateSnapshot).error!)));
+      handleError: (error, stackTrace, sink) =>
+          sink.addError((error as StateSnapshot).error!)));
 
   /// Last emitted cached data
   T? get cData => _controller.cachedValue.data;
@@ -190,7 +188,6 @@ abstract class Store<T, A> {
   /// Emit a state with error
   @protected
   void updateStateWithError(Object error) {
-    assert(error != null);
     _lastEmittedError = error;
     _controller.addError(StateSnapshot<T>(null, error));
   }

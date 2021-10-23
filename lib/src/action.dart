@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dispatcher.dart';
 import 'state_manager.dart';
-import 'package:meta/meta.dart';
 
 typedef Future<K> ActionBody<T, K>(T payload);
 

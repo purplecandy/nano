@@ -26,7 +26,7 @@ class _ActionQueue<A> {
   void onChange(void Function(_QueuedAction action) cb) {
     if (_queue.isNotEmpty) {
       _busy = true;
-      cb?.call(_queue.first);
+      cb.call(_queue.first);
       _dequeue();
       onChange(cb);
     }

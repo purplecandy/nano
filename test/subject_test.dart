@@ -4,6 +4,7 @@ import 'package:nano/nano.dart';
 void main() {
   /// This test verifis that ModifiedSubject retains the cached value even when an error is emitted
   test("ModifiedSubject Cache Value Test", () {
+    // ignore: close_sinks
     final counter = ModifiedBehaviorSubject<int>.seeded(0);
     expect(counter.value, counter.cachedValue);
     counter.add(1);

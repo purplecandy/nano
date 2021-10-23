@@ -25,7 +25,7 @@ class Writable<T> {
 
   /// Current state
   StateSnapshot<T> get state => _lastEmittedError == null
-      ? StateSnapshot(_controller.value?.data, null)
+      ? StateSnapshot(_controller.value.data, null)
       : StateSnapshot(null, _lastEmittedError);
 
   ///Controller of the event stream
@@ -42,7 +42,7 @@ class Writable<T> {
           sink.addError((error as StateSnapshot).error!)));
 
   /// Last emitted cached data
-  T? get cData => _controller.cachedValue?.data;
+  T? get cData => _controller.cachedValue.data;
 
   // Directly listen to the store's state changes
   StreamSubscription<StateSnapshot<T>> listen(
@@ -67,7 +67,6 @@ class Writable<T> {
 
   /// Emit a state with error
   void addError(Object error) {
-    assert(error != null);
     _lastEmittedError = error;
     _controller.addError(StateSnapshot<T>(null, error));
   }

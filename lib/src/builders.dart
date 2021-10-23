@@ -90,7 +90,7 @@ class _StateBuilderState<T> extends State<StateBuilder<T>> {
   @override
   void didUpdateWidget(StateBuilder<T> oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.stream != widget?.stream ?? false) _initialize();
+    if (oldWidget.stream != widget.stream) _initialize();
   }
 
   @override

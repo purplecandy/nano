@@ -61,7 +61,7 @@ class Dispatcher {
   }
 
   bool _checkActionsCompleted(List<ActionId> waiting, ActionId id) {
-    if (waiting == null || waiting.isEmpty) return true;
+    if (waiting.isEmpty) return true;
     int i = 0;
     for (var actionId in waiting) {
       if (_isCompleted.containsKey(actionId)) {

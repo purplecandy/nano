@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
 import 'package:nano/nano.dart' as n;
 
-
 class CounterApp extends StatefulWidget {
   CounterApp({Key key}) : super(key: key);
 
@@ -14,6 +13,8 @@ class CounterApp extends StatefulWidget {
 }
 
 class _CounterAppState extends State<CounterApp> {
+  bool isDoubleTaps = true;
+
   /// We are obtaining our `CounterStore` here
   /// Yes that's it no context or anything except a slight catch
   final _counter = counterRef.store;
@@ -26,7 +27,10 @@ class _CounterAppState extends State<CounterApp> {
       ///
       /// The `onDone` is a call back that is executed once the action is completed successfully
       /// There is also an `onError` call back that is executed if there is an exection occur
-      n.Action(incrementRef, onError: handleError, onDone: () async {
+      n.Action(incrementRef, onError: (error) {
+        print("Error $error");
+        return;
+      }, onDone: () async {
         await Future.delayed(Duration(seconds: 1));
         autoIncrement();
       }).run();
@@ -59,13 +63,16 @@ class _CounterAppState extends State<CounterApp> {
       appBar: AppBar(
         title: Text("Counter State"),
         actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.publish),
+          FlatButton(
+              child: Text(isDoubleTaps ? "Set Single" : "Set Double"),
               onPressed: () {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Scaffold(appBar: AppBar())));
+                setState(() {
+                  isDoubleTaps = !isDoubleTaps;
+                });
+                // Navigator.push(
+                //     context,
+                //     MaterialPageRoute(
+                //         builder: (context) => Scaffold(appBar: AppBar())));
               })
         ],
       ),
@@ -77,9 +84,15 @@ class _CounterAppState extends State<CounterApp> {
       body: StateBuilder<int>(
         initialState: _counter.state,
         stream: _counter.stream,
-        rebuildOnly: (old,state) => ((state.data ?? 1) % 2 == 0),
-        builder: (context, state, init) =>
+        rebuildOnly: (old, state) =>
+            isDoubleTaps ? ((state.data ?? 1) % 2 == 0) : true,
+        builder: (context, state, init) => Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            if (isDoubleTaps) Text("Rebuilds only on double taps!"),
             Center(child: Text(state.toString())),
+          ],
+        ),
         // onError: (_,   error) => Center(child: Text(error.toString())),
         // onData: (_, data) => Center(child: Text(data.toString())),
       ),
@@ -94,13 +107,21 @@ class _CounterAppState extends State<CounterApp> {
                 /// If this is tapped, dispatch this action.
                 /// Incase if it fails execute `handleError` otherwise `handleDone`
                 // incrementRef(onError: handleError, onDone: handleDone)..run(),
-                n.Action(incrementRef, onError: handleError, onDone: handleDone).run(),
+                n.Action(incrementRef, onError: (error) {
+              print("Error $error");
+              return;
+            }, onDone: handleDone)
+                    .run(),
             child: Icon(Icons.add),
           ),
           FloatingActionButton(
             mini: true,
             heroTag: null,
-            onPressed: () => n.Action(incrementRef, onError: handleError, onDone: handleDone).run(),
+            onPressed: () => n.Action(decrementRef, onError: (error) {
+              print("Error $error");
+              return;
+            }, onDone: handleDone)
+                .run(),
             child: Icon(Icons.remove),
           ),
           FloatingActionButton(
