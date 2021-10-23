@@ -21,9 +21,9 @@ enum Status {
 /// An improved implementation of AsyncResponse
 class Reply<T> {
   final Status status;
-  final T data;
+  final T? data;
   final dynamic error;
-  Reply({this.status, this.data, this.error, allowNull = true})
+  Reply({required this.status,this.data, this.error, allowNull = true})
       : assert(
             (allowNull
                 ? true
@@ -63,9 +63,9 @@ enum PropStatus {
 /// An improved implementation of AsyncResponse
 class Prop<T> {
   final PropStatus status;
-  final T data;
+  final T? data;
   final dynamic error;
-  Prop({this.status, this.data, this.error, allowNull = true})
+  Prop({required this.status, this.data, this.error, allowNull = true})
       : assert(
             (allowNull
                 ? true

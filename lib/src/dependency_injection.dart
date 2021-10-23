@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nano/src/state_manager.dart';
 
 enum StoreTokenStatus { initialized, disposed, uninitialized, unknown }
 
@@ -78,8 +79,8 @@ class Pool {
   void create(StoreToken token, {bool recreate = false}) {
     if (_uninitialized.containsKey(token))
       try {
-        _initialized[token] = _uninitialized[token].call();
-        if (recreate) _reusable[token] = _uninitialized[token];
+        _initialized[token] = _uninitialized[token]!.call();
+        if (recreate) _reusable[token] = _uninitialized[token]!;
         _uninitialized.remove(token);
       } catch (e) {
         print("Exception occured when tried initializing the store");
@@ -102,7 +103,7 @@ class Pool {
   // }
 
   /// Disposes a store
-  void disposeStore<T>(StoreToken token, StoreDisposer<T> dispose) {
+  void disposeStore<T>(StoreToken token, StoreDisposer<T>? dispose) {
     if (_uninitialized.containsKey(token)) {
       throw Exception("Tried disposing an unitialized token");
     } else {
@@ -135,7 +136,7 @@ class Pool {
   }
 
   /// Releases the resources of a recreateable store
-  void uninitialize<T>(StoreToken token, StoreDisposer<T> dispose) {
+  void uninitialize<T>(StoreToken token, StoreDisposer<T>? dispose) {
     if (_uninitialized.containsKey(token))
       throw Exception("$token hasn't been initialized");
     else if (_disposed.containsKey(token)) {
@@ -153,7 +154,7 @@ class Pool {
         print(stack);
       }
       _initialized.remove(token);
-      _uninitialized[token] = _reusable[token];
+      _uninitialized[token] = _reusable[token]!;
       _reusable.remove(token);
     }
   }
@@ -173,11 +174,11 @@ class Pool {
 
 class StoreManager extends StatefulWidget {
   final Widget child;
-  final List<StoreToken> initialize, recreatable, uninitialize, dispose;
-  final void Function() onInit, onDispose;
+  final List<StoreToken>? initialize, recreatable, uninitialize, dispose;
+  final void Function()? onInit, onDispose;
   StoreManager(
-      {Key key,
-      @required this.child,
+      {Key? key,
+      required this.child,
       this.onInit,
       this.onDispose,
       this.initialize,
@@ -191,10 +192,10 @@ class StoreManager extends StatefulWidget {
 }
 
 class _StoreManagerState extends State<StoreManager> {
-  List<StoreToken> get initialize => widget.initialize;
-  List<StoreToken> get uninitialize => widget.uninitialize;
-  List<StoreToken> get dis => widget.dispose;
-  List<StoreToken> get recreatable => widget.recreatable;
+  List<StoreToken>? get initialize => widget.initialize;
+  List<StoreToken>? get uninitialize => widget.uninitialize;
+  List<StoreToken>? get dis => widget.dispose;
+  List<StoreToken>? get recreatable => widget.recreatable;
 
   @override
   void initState() {
@@ -212,10 +213,10 @@ class _StoreManagerState extends State<StoreManager> {
   void dispose() {
     widget.onDispose?.call();
     dis?.forEach((token) {
-      Pool.instance.disposeStore(token, (store) => store.dispose());
+      Pool.instance.disposeStore<Store>(token, (store) => store.dispose());
     });
     uninitialize?.forEach((token) {
-      Pool.instance.uninitialize(token, (store) => store.dispose());
+      Pool.instance.uninitialize<Store>(token, (store) => store.dispose());
     });
     super.dispose();
   }

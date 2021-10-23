@@ -7,13 +7,13 @@ import 'package:nano/nano.dart';
 ///
 /// You also need to call the `dispose()` to release the resources
 class Writable<T> {
-  final _defaultMiddlewares = List<Middleware>();
+  final _defaultMiddlewares = <Middleware>[];
 
   /// Controller that manges the actual data events
-  ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
+  late ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
 
-  Object _lastEmittedError;
-  Writable({T state, bool setInitialState = true}) {
+  Object? _lastEmittedError;
+  Writable({T? state, bool setInitialState = true}) {
     if (setInitialState)
       _controller = ModifiedBehaviorSubject<StateSnapshot<T>>.seeded(
           _initialState(state));
@@ -21,7 +21,7 @@ class Writable<T> {
       _controller = ModifiedBehaviorSubject<StateSnapshot<T>>();
   }
 
-  StateSnapshot<T> _initialState(T object) => StateSnapshot<T>(object, null);
+  StateSnapshot<T> _initialState(T? object) => StateSnapshot<T>(object, null);
 
   /// Current state
   StateSnapshot<T> get state => _lastEmittedError == null
@@ -37,19 +37,19 @@ class Writable<T> {
   ///
   /// Makes tests easier to write
   Stream<T> get rawStream => stream.transform(StreamTransformer.fromHandlers(
-      handleData: (snapshot, sink) => sink.add(snapshot.data),
+      handleData: (snapshot, sink) => sink.add(snapshot.data!),
       handleError: (error, stackTrace, sink) =>
-          sink.addError((error as StateSnapshot).error)));
+          sink.addError((error as StateSnapshot).error!)));
 
   /// Last emitted cached data
-  T get cData => _controller.cachedValue?.data;
+  T? get cData => _controller.cachedValue?.data;
 
   // Directly listen to the store's state changes
   StreamSubscription<StateSnapshot<T>> listen(
       void onData(StateSnapshot<T> value),
-      {Function onError,
-      void onDone(),
-      bool cancelOnError}) {
+      {Function? onError,
+      void onDone()?,
+      bool? cancelOnError}) {
     return controller.listen(
       onData,
       onDone: onDone,

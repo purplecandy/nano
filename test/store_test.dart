@@ -49,19 +49,25 @@ main() {
   group("Store streams test", () {
     test("Listeners test", () async {
       final counter = CounterStore();
-      counter.stream
-          .listen((event) => print("Data"), onError: (e) => print("Error"));
+      counter.stream.listen((event) {
+        print("Data ${event.data}");
+        print("Count $count");
+      }, onError: (e) => print("Error"));
       addListener(counter, 3, 2);
-      await incrementRef(payload: counter, onDone: () => count++).run();
-      errortRef(payload: counter).run();
+      await Future.delayed(Duration(milliseconds: 100));
+      count++;
+      await Action.single(counter, IncrementMutation(), onDone: () {
+        print("incrementing manually");
+      }).run();
+      Action.single(counter, ErrorMutation()).run();
 
       /// Error hasn't been completed so it will still receive current state which is a Data
       addListener(counter, 2, 2);
-
       await Future.delayed(Duration(milliseconds: 100));
       addListener(counter, 1, 2);
-      var action = incrementRef(payload: counter, onDone: () => count++)..run();
-      errortRef(payload: counter, waitFor: [action.id]).run();
+      count++;
+      var action = Action.single(counter, IncrementMutation())..run();
+      Action.single(counter, ErrorMutation(), waitFor: [action.id]).run();
       await Future.delayed(Duration(
           milliseconds: 100)); //waiting for the above action to complete
       counter.dispose();

@@ -1,12 +1,20 @@
 import "package:nano/nano.dart";
 import 'counter_store.dart';
 
-final incrementRef = ActionRef<Null, String>(
-  store: (_) => counterRef.store,
-  mutation: (result, payload) => CounterActions.increment,
-);
+Stream<Mutation> incrementRef()async* {
+  yield Mutation(counterRef.store, CounterActions.increment);
+}
 
-final decrementRef = ActionRef<Null, String>(
-  store: (_) => counterRef.store,
-  mutation: (result, payload) => CounterActions.decrement,
-);
+Stream<Mutation> decrementRef()async* {
+  yield Mutation(counterRef.store, CounterActions.decrement);
+}
+
+// final incrementRef = ActionRef<Null, String>(
+//   store: (_) => counterRef.store,
+//   mutation: (result, payload) => CounterActions.increment,
+// );
+
+// final decrementRef = ActionRef<Null, String>(
+//   store: (_) => counterRef.store,
+//   mutation: (result, payload) => CounterActions.decrement,
+// );

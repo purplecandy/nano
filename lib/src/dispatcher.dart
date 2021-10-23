@@ -15,8 +15,8 @@ class Dispatcher {
   final Map<ActionId, Action> _actions = {};
   final List<_Waiting> _waiting = [];
   final Map<ActionId, bool> _isCompleted = {};
-  StreamController<Map<ActionId, bool>> _controller;
-  Stream<Map<ActionId, bool>> _stream;
+  late StreamController<Map<ActionId, bool>> _controller;
+  late Stream<Map<ActionId, bool>> _stream;
 
   bool _busy = false;
 
@@ -50,7 +50,7 @@ class Dispatcher {
         }
       } catch (e) {
         if (item.action.onError != null)
-          item.action.onError(e);
+          item.action.onError!(e);
         else
           print(e);
         _waiting.removeAt(ii);
@@ -65,7 +65,7 @@ class Dispatcher {
     int i = 0;
     for (var actionId in waiting) {
       if (_isCompleted.containsKey(actionId)) {
-        if (_isCompleted[actionId])
+        if (_isCompleted[actionId] == true)
           i++;
         else
           throw IncompleteDependency(
@@ -82,7 +82,7 @@ class Dispatcher {
 
   Future<void> _execute(ActionId id) async {
     if (_actions.containsKey(id)) {
-      final action = _actions[id];
+      final action = _actions[id]!;
       // If the action has dependency on other action.
       // Check if the dependecies have completed dispatching
 
@@ -101,7 +101,7 @@ class Dispatcher {
         }
       } catch (e, stack) {
         if (action.onError != null) {
-          final errors = action.onError.call(e);
+          final errors = action.onError?.call(e);
           if (errors != null) {
             for (var error in errors) {
               emitError(error.store, error.type);

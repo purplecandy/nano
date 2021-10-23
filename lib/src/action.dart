@@ -31,7 +31,7 @@ typedef List<Store> ProxyStores<T>(T payload);
 /// Actions that are send to the Dispatcher and executed
 /// which causes mutation on the specified store's state
 class Action {
-  /// You perform any async actions that are required for a mutation and yeild the mutation
+  /// You perform any async actions that are required for a mutation and yield the mutation
   ///
   /// Since it's a stream multiple mutations can be emitted from a single action
   ///
@@ -42,19 +42,19 @@ class Action {
 
   /// A list of fallback mutations you want to send to as Error events
   ///
-  /// 
-  /// You're basically emitting state with erros, just a little quicker utilizing the same action
+  ///
+  /// You're basically emitting state with errors, just a little quicker utilizing the same action
   /// ```dart
   /// void reducer(mutation){
   ///   updateStateWithError(mutation);
   /// }
   /// ```
-  /// 
+  ///
   /// Feel free to pass any object you want, error and data state are maintained seperately so you can emit errors anytime without worrying about losing your data
-  final List<Mutation> Function(Object error) onError;
+  final List<Mutation>? Function(Object error)? onError;
 
   /// Executed when the action has been successfully executed
-  final void Function() onDone;
+  final void Function()? onDone;
   final ActionId _id = Dispatcher.instance.getId();
 
   /// A list actions that you want to wait for them to be executed successfully before executing this action.
@@ -65,54 +65,64 @@ class Action {
 
   /// A unique id that represents a specific instance of an action
   ActionId get id => _id;
-  Action(this.body, {this.onDone, this.onError, this.waitFor});
+  Action(this.body, {this.onDone, this.onError, this.waitFor = const []});
   void clear(ActionId id) {
-    assert(id != null);
     waitFor.clear();
   }
 
   Future<void> run() async => await Dispatcher.instance.add(this);
+
+  /// Quickly creates and executes a single mutatiton
+  factory Action.single(Store store, dynamic type,
+      {void Function()? onDone,
+      List<Mutation>? Function(Object error)? onError,
+      List<ActionId> waitFor = const []}) {
+    return Action(() async* {
+      yield Mutation(store, type);
+    }, onDone: onDone, onError: onError, waitFor: waitFor);
+  }
 }
 
 /// ActionRef will return a copy of Action which can be passed to the dispatcher to mutate changes
-class ActionRef<T, K> implements Function {
-  final ActionBody<T, K> body;
-  final ActionMutations<T, K> mutations;
-  final bool hasProxyMutation;
-  final Store Function(T payload) store;
-  final ActionMutation<K, T> mutation;
-  ActionRef({
-    this.mutations,
-    this.mutation,
-    this.body,
-    this.hasProxyMutation = false,
-    this.store,
-  });
+// class ActionRef<T, K> implements Function {
+//   final ActionBody<T, K>? body;
+//   final ActionMutations<T, K>? mutations;
+//   final bool hasProxyMutation;
+//   final Store Function(T payload) store;
+//   final ActionMutation<K, T>? mutation;
+//   ActionRef({
+//     this.mutations,
+//     this.mutation,
+//     this.body,
+//     this.hasProxyMutation = false,
+//     this.store,
+//   });
 
-  Action call(
-      {T payload,
-      List<ActionId> waitFor,
-      List<Mutation> Function(Object error) onError,
-      void Function() onDone}) {
-    assert(mutations != null || (store != null && mutation != null));
-    return Action(
-      () async* {
-        var result;
-        if (body != null) result = await Future.microtask(() => body(payload));
-        if (mutations != null) {
-          final listOfMutations = mutations(result, payload);
-          for (var mutation in listOfMutations) {
-            yield mutation;
-          }
-        } else {
-          final storeObject = store(payload);
-          final mutationObject = mutation(result, payload);
-          yield Mutation(storeObject, mutationObject);
-        }
-      },
-      waitFor: waitFor,
-      onDone: onDone,
-      onError: onError,
-    );
-  }
-}
+//   Action call(
+//       {
+//       required T payload,
+//       List<ActionId> waitFor,
+//       List<Mutation> Function(Object error) onError,
+//       void Function() onDone}) {
+//     assert(mutations != null || (store != null && mutation != null));
+//     return Action(
+//       () async* {
+//         var result;
+//         if (body != null) result = await Future.microtask(() => body(payload));
+//         if (mutations != null) {
+//           final listOfMutations = mutations?.call(result, payload) ?? [];
+//           for (var mutation in listOfMutations) {
+//             yield mutation;
+//           }
+//         } else {
+//           final storeObject = store(payload);
+//           final mutationObject = mutation(result, payload);
+//           yield Mutation(storeObject, mutationObject);
+//         }
+//       },
+//       waitFor: waitFor,
+//       onDone: onDone,
+//       onError: onError,
+//     );
+//   }
+// }

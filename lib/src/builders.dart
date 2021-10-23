@@ -15,23 +15,23 @@ typedef Widget WaitingBuilderFn(BuildContext context);
 class StateBuilder<T> extends StatefulWidget {
   final StateSnapshot<T> initialState;
   final Stream<StateSnapshot<T>> stream;
-  final BuilderCondition<T> rebuildOnly;
-  final SnapBuilder<T> builder;
-  final DataBuilderFn<T> onData;
-  final ErrorBuilderFn onError;
-  final WaitingBuilderFn waiting;
+  final BuilderCondition<T>? rebuildOnly;
+  final SnapBuilder<T>? builder;
+  final DataBuilderFn<T>? onData;
+  final ErrorBuilderFn? onError;
+  final WaitingBuilderFn? waiting;
   const StateBuilder(
-      {Key key,
-      @required this.initialState,
-      @required this.stream,
+      {Key? key,
+      required this.initialState,
+      required this.stream,
       this.rebuildOnly,
       this.onData,
       this.onError,
       this.waiting,
       this.builder})
       : assert(!(builder != null && (onData != null || onError != null))),
-        assert(initialState != null),
-        assert(stream != null),
+        // assert(initialState != null),
+        // assert(stream != null),
         super(key: key);
   @override
   _StateBuilderState createState() => _StateBuilderState<T>();
@@ -39,9 +39,9 @@ class StateBuilder<T> extends StatefulWidget {
 
 class _StateBuilderState<T> extends State<StateBuilder<T>> {
   Stream<StateSnapshot<T>> get stream => widget.stream;
-  StreamSubscription _subscription;
-  StateSnapshot<T> _lastValue;
-  bool _hasError = false;
+  late StreamSubscription _subscription;
+  late StateSnapshot<T>? _lastValue;
+  bool? _hasError = false;
   bool _unInitialized = false;
   void _initialize() {
     if (widget.initialState.waiting) _unInitialized = true;
@@ -49,7 +49,7 @@ class _StateBuilderState<T> extends State<StateBuilder<T>> {
     _lastValue = widget.initialState;
     _subscription = stream.listen((event) {
       if (widget.rebuildOnly != null) {
-        if (widget.rebuildOnly.call(_lastValue, event)) {
+        if (widget.rebuildOnly!.call(_lastValue!, event)) {
           _lastValue = event;
         }
       } else {
@@ -76,7 +76,7 @@ class _StateBuilderState<T> extends State<StateBuilder<T>> {
   @override
   void initState() {
     super.initState();
-    if (stream != null) _initialize();
+    _initialize();
   }
 
   @override
@@ -96,10 +96,10 @@ class _StateBuilderState<T> extends State<StateBuilder<T>> {
   @override
   Widget build(BuildContext context) {
     if (widget.builder != null)
-      return widget.builder(context, _lastValue, !_unInitialized);
-    if (_unInitialized) return widget.waiting(context);
-    return _hasError
-        ? widget.onError(context, _lastValue.error)
-        : widget.onData(context, _lastValue.data);
+      return widget.builder!(context, _lastValue!, !_unInitialized);
+    if (_unInitialized) return widget.waiting!(context);
+    return _hasError == true
+        ? widget.onError!(context, _lastValue!.error!)
+        : widget.onData!(context, _lastValue!.data!);
   }
 }

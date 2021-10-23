@@ -4,8 +4,8 @@ import 'package:meta/meta.dart';
 /// Current state of the store.
 @immutable
 class StateSnapshot<T> {
-  final T data;
-  final Object error;
+  final T? data;
+  final Object? error;
 
   const StateSnapshot(
     this.data,

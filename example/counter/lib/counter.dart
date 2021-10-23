@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'package:counter/actions.dart';
 import 'package:counter/counter_store.dart';
 import 'package:flutter/material.dart';
 import 'package:nano/nano.dart';
-import 'actions.dart';
+import 'package:nano/nano.dart' as n;
+
 
 class CounterApp extends StatefulWidget {
   CounterApp({Key key}) : super(key: key);
@@ -24,11 +26,10 @@ class _CounterAppState extends State<CounterApp> {
       ///
       /// The `onDone` is a call back that is executed once the action is completed successfully
       /// There is also an `onError` call back that is executed if there is an exection occur
-      incrementRef(onDone: () async {
+      n.Action(incrementRef, onError: handleError, onDone: () async {
         await Future.delayed(Duration(seconds: 1));
         autoIncrement();
-      })
-        ..run();
+      }).run();
     }
   }
 
@@ -92,13 +93,14 @@ class _CounterAppState extends State<CounterApp> {
 
                 /// If this is tapped, dispatch this action.
                 /// Incase if it fails execute `handleError` otherwise `handleDone`
-                incrementRef(onError: handleError, onDone: handleDone)..run(),
+                // incrementRef(onError: handleError, onDone: handleDone)..run(),
+                n.Action(incrementRef, onError: handleError, onDone: handleDone).run(),
             child: Icon(Icons.add),
           ),
           FloatingActionButton(
             mini: true,
             heroTag: null,
-            onPressed: () => decrementRef()..run(),
+            onPressed: () => n.Action(incrementRef, onError: handleError, onDone: handleDone).run(),
             child: Icon(Icons.remove),
           ),
           FloatingActionButton(

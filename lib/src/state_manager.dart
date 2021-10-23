@@ -26,7 +26,7 @@ class Worker<T> {
   /// Number of times it needs to be called
   ///
   /// If not specified it will run infintely and you will have to explicitly remove it
-  final int limit;
+  final int? limit;
   int called = 0;
   Worker(this.condition, this.callback, {this.limit})
       : assert(callback != null),
@@ -51,12 +51,12 @@ class Worker<T> {
 /// BehaviorSubject that retains the last successfull data on receiving an error.
 class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
   final BehaviorSubject<T> _subject;
-  T _cachedValue;
-  bool _hasError;
+  late T _cachedValue;
+  late bool _hasError;
 
   factory ModifiedBehaviorSubject({
-    void Function() onListen,
-    void Function() onCancel,
+    void Function()? onListen,
+    void Function()? onCancel,
     bool sync = false,
   }) {
     return ModifiedBehaviorSubject._(
@@ -65,8 +65,8 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
 
   factory ModifiedBehaviorSubject.seeded(
     T value, {
-    void Function() onListen,
-    void Function() onCancel,
+    void Function()? onListen,
+    void Function()? onCancel,
     bool sync = false,
   }) {
     return ModifiedBehaviorSubject._(BehaviorSubject<T>.seeded(value,
@@ -86,7 +86,7 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
 
   @protected
   @override
-  void onAddError(Object error, [StackTrace stackTrace]) {
+  void onAddError(Object error, [StackTrace? stackTrace]) {
     _hasError = true;
   }
 
@@ -103,11 +103,24 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
 
   /// Returns the last cached value emitted
   T get cachedValue => _cachedValue;
+  
+
+  @override
+  T? get valueOrNull => _subject.valueOrNull;
+
+  @override
+  Object get error => _subject.error;
+
+  @override
+  StackTrace? get stackTrace => _subject.stackTrace;
+
+  @override
+  Object? get errorOrNull => _subject.errorOrNull;
 }
 
 abstract class Store<T, A> {
-  final _defaultMiddlewares = List<Middleware>();
-  final _workers = List<Worker>();
+  final _defaultMiddlewares = <Middleware>[];
+  final _workers = <Worker>[];
   final _queue = _ActionQueue();
 
   // ActionId _lastAction;
@@ -115,13 +128,13 @@ abstract class Store<T, A> {
   // ActionId get lastAction => _lastAction;
 
   /// Controller that manges the actual data events
-  ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
+  late ModifiedBehaviorSubject<StateSnapshot<T>> _controller;
 
   /// A publishSubject doesn't hold values hence a store to save the last error
-  Object _lastEmittedError;
-  Store([T state]) {
+  Object? _lastEmittedError;
+  Store([T? state]) {
     // _errorController = PublishSubject<StateSnapshot<T>>();
-    if (setInitialState)
+    if (setInitialState && state != null)
       _controller = ModifiedBehaviorSubject<StateSnapshot<T>>.seeded(
           _initialState(state));
     else
@@ -146,19 +159,18 @@ abstract class Store<T, A> {
   ///
   /// Makes tests easier to write
   Stream<T> get rawStream => stream.transform(StreamTransformer.fromHandlers(
-      handleData: (snapshot, sink) => sink.add(snapshot.data),
-      handleError: (error, stackTrace, sink) =>
-          sink.addError((error as StateSnapshot).error)));
+      handleData: (snapshot, sink) => sink.add(snapshot.data!),
+      handleError: (error, stackTrace, sink) => sink.addError((error as StateSnapshot).error!)));
 
   /// Last emitted cached data
-  T get cData => _controller.cachedValue?.data;
+  T? get cData => _controller.cachedValue.data;
 
   // Directly listen to the store's state changes
   StreamSubscription<StateSnapshot<T>> listen(
       void onData(StateSnapshot<T> value),
-      {Function onError,
-      void onDone(),
-      bool cancelOnError}) {
+      {Function? onError,
+      void onDone()?,
+      bool? cancelOnError}) {
     return controller.listen(
       onData,
       onDone: onDone,

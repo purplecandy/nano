@@ -2,11 +2,11 @@ part of 'state_manager.dart';
 
 class _QueuedAction<A> {
   final A mutationType;
-  _QueuedAction({@required this.mutationType});
+  _QueuedAction({required this.mutationType});
 }
 
 class _ActionQueue<A> {
-  final _queue = List<_QueuedAction>();
+  final _queue = <_QueuedAction>[];
   bool _busy = false;
 
   /// Removes all actions from the queue

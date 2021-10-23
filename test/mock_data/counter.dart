@@ -19,8 +19,9 @@ class CounterStore extends Store<int, CounterMutations> {
 
   @override
   void reducer(action) {
-    if (action is IncrementMutation) updateState(cData + 1);
-    if (action is DecrementMutation) updateState(cData - 1);
+    print("Incoming $action");
+    if (action is IncrementMutation) updateState(cData! + 1);
+    if (action is DecrementMutation) updateState(cData! - 1);
     if (action is ErrorMutation) updateStateWithError("Invalid action");
     if (action is CountMutation) updateState(action.count);
   }
@@ -28,31 +29,14 @@ class CounterStore extends Store<int, CounterMutations> {
 
 class CounterParam {
   final CounterStore store;
-  final int count;
+  final int? count;
   final int seconds;
   CounterParam(this.store, this.count, this.seconds);
 }
-
 //Actions
-final incrementRef = ActionRef<CounterStore, Null>(
-  store: (payload) => payload,
-  mutation: (_, payload) => IncrementMutation(),
-);
 
-final decrementRef = ActionRef<CounterStore, Null>(
-  store: (payload) => payload,
-  mutation: (_, payload) => DecrementMutation(),
-);
-final errortRef = ActionRef<CounterStore, Null>(
-  store: (payload) => payload,
-  mutation: (_, payload) => ErrorMutation(),
-);
-
-final setRef = ActionRef<CounterParam, void>(
-  store: (payload) => payload.store,
-  body: (payload) async {
-    if (payload.count == null) throw Exception("Count value can't be null");
-    await Future.delayed(Duration(milliseconds: payload.seconds));
-  },
-  mutation: (result, payload) => CountMutation(payload.count),
-);
+Stream<Mutation> setRef(CounterParam payload) async* {
+  if (payload.count == null) throw Exception("Count value can't be null");
+  await Future.delayed(Duration(milliseconds: payload.seconds));
+  yield Mutation(payload.store, CountMutation(payload.count!));
+}
