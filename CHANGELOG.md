@@ -1,4 +1,4 @@
-## [0.2.1] - Added Null Safety
+## [0.3.0] - Added Null Safety
 
 Added support for Null Safety
 Removed ActionRef
