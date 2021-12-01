@@ -1,3 +1,5 @@
+## [0.3.1] - ValueStream compatiblity
+
 ## [0.3.1] - Bug fix
 
 Fixed bug when store is initialized without a value.
