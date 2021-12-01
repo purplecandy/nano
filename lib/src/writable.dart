@@ -25,7 +25,7 @@ class Writable<T> {
 
   /// Current state
   StateSnapshot<T> get state => _lastEmittedError == null
-      ? StateSnapshot(_controller.value.data, null)
+      ? StateSnapshot(_controller.valueOrNull?.data, null)
       : StateSnapshot(null, _lastEmittedError);
 
   ///Controller of the event stream
