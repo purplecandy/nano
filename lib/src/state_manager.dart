@@ -49,7 +49,7 @@ class Worker<T> {
 /// BehaviorSubject that retains the last successfull data on receiving an error.
 class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
   final BehaviorSubject<T> _subject;
-  late T _cachedValue;
+  late T? _cachedValue;
   late bool _hasError;
 
   factory ModifiedBehaviorSubject({
@@ -72,7 +72,7 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
   }
 
   ModifiedBehaviorSubject._(this._subject) : super(_subject, _subject) {
-    _cachedValue = _subject.value;
+    _cachedValue = _subject.valueOrNull;
   }
 
   @protected
@@ -100,7 +100,7 @@ class ModifiedBehaviorSubject<T> extends Subject<T> implements ValueStream<T> {
   T get value => _subject.value;
 
   /// Returns the last cached value emitted
-  T get cachedValue => _cachedValue;
+  T? get cachedValue => _cachedValue;
 
   @override
   T? get valueOrNull => _subject.valueOrNull;
@@ -161,7 +161,7 @@ abstract class Store<T, A> {
           sink.addError((error as StateSnapshot).error!)));
 
   /// Last emitted cached data
-  T? get cData => _controller.cachedValue.data;
+  T? get cData => _controller.cachedValue?.data;
 
   // Directly listen to the store's state changes
   StreamSubscription<StateSnapshot<T>> listen(
