@@ -1,6 +1,6 @@
 name: nano
 description: Nano makes it easier to build and maintain complex Flutter apps.
-version: 0.3.0
+version: 0.3.1
 homepage: https://github.com/purplecandy/nano
 
 environment:
