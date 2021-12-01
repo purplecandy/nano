@@ -1,3 +1,7 @@
+## [0.3.1] - Bug fix
+
+Fixed bug when store is initialized without a value.
+
 ## [0.3.0] - Added Null Safety
 
 Added support for Null Safety
